@@ -1,0 +1,31 @@
+# Android build output
+build/
+out/
+*.apk
+*.aab
+*.dex
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+.gradle/
+local.properties
+
+# Environment
+.env
+*.pem
+*.key
+secrets/
+google-services.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test output
+TestResults/
+coverage/
+
+# Keystore — never commit real keystores
+*.jks
+*.keystore
