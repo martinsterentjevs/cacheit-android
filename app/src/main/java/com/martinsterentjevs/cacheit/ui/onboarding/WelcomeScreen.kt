@@ -11,6 +11,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.martinsterentjevs.cacheit.R
+import androidx.compose.ui.R.string
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
@@ -32,24 +35,23 @@ fun WelcomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .safeDrawingPadding()
-            .padding(horizontal = CacheItSpacing.md),
-        verticalArrangement = Arrangement.Bottom,
+            .padding(horizontal = CacheItSpacing.md, vertical = CacheItSpacing.xl),
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            "Welcome",
+            stringResource(R.string.welcome_greeting),
             style = TypeTitle,
-            color = Neutral200,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(vertical = CacheItSpacing.md),
         )
 
         Button(
             onClick = onGetStarted,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = CacheItSpacing.xl),
+                .padding(top = CacheItSpacing.xl, bottom = CacheItSpacing.md),
         ) {
-            Text("Get started")
+            Text(stringResource(R.string.welcome_get_started))
         }
 
         OutlinedButton(
@@ -58,7 +60,7 @@ fun WelcomeScreen(
                 .fillMaxWidth()
                 .padding(top = CacheItSpacing.sm, bottom = CacheItSpacing.xl),
         ) {
-            Text("I already have an account")
+            Text(stringResource(R.string.welcome_account_exists))
         }
     }
 }

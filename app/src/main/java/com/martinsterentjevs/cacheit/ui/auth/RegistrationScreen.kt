@@ -9,15 +9,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.CacheItTheme
+import com.martinsterentjevs.cacheit.ui.theme.TypeDisplay
+import com.martinsterentjevs.cacheit.ui.theme.TypeHeading
 import com.martinsterentjevs.cacheit.ui.theme.TypeTitle
 
 /**
@@ -37,7 +41,9 @@ fun RegistrationScreen(
     onRegistrationSuccess: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
 ) {
-    var identifier by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
@@ -47,15 +53,32 @@ fun RegistrationScreen(
             .safeDrawingPadding()
             .padding(CacheItSpacing.lg),
     ) {
-        Text("Create account", style = TypeTitle)
+        Text("Create account", style = TypeTitle, textAlign = TextAlign.Center, )
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Full name") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = CacheItSpacing.lg),
+        )
 
         OutlinedTextField(
-            value = identifier,
-            onValueChange = { identifier = it },
+            value = email,
+            onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = CacheItSpacing.xl),
+                .padding(top = CacheItSpacing.lg),
+        )
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = CacheItSpacing.sm),
         )
 
         OutlinedTextField(
@@ -66,7 +89,6 @@ fun RegistrationScreen(
                 .fillMaxWidth()
                 .padding(top = CacheItSpacing.sm),
         )
-
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },

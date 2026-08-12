@@ -1,5 +1,6 @@
 package com.martinsterentjevs.cacheit.ui.auth
 
+import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +43,7 @@ fun LoginScreen(
             .fillMaxSize()
             .safeDrawingPadding()
             .padding(CacheItSpacing.lg),
+
     ) {
         Text("Log in", style = TypeTitle)
 
