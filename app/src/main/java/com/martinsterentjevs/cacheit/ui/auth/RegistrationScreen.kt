@@ -1,27 +1,32 @@
 package com.martinsterentjevs.cacheit.ui.auth
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.CacheItTheme
-import com.martinsterentjevs.cacheit.ui.theme.TypeDisplay
-import com.martinsterentjevs.cacheit.ui.theme.TypeHeading
+import com.martinsterentjevs.cacheit.ui.theme.TypeCaption
+import com.martinsterentjevs.cacheit.ui.theme.TypeLabel
 import com.martinsterentjevs.cacheit.ui.theme.TypeTitle
 
 /**
@@ -53,11 +58,26 @@ fun RegistrationScreen(
             .safeDrawingPadding()
             .padding(CacheItSpacing.lg),
     ) {
-        Text("Create account", style = TypeTitle, textAlign = TextAlign.Center, )
+
+        Text((stringResource(R.string.registration_title)),
+            style = TypeTitle,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = CacheItSpacing.md)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            color = MaterialTheme.colorScheme.onBackground)
+        Text((stringResource(R.string.registration_subtitle)),
+            style = TypeLabel,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onBackground)
+
+        Spacer(modifier = Modifier.height(CacheItSpacing.xl))
+
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Full name") },
+            label = { Text((stringResource(R.string.registration_accountholder))) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = CacheItSpacing.lg),
@@ -66,16 +86,16 @@ fun RegistrationScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text (stringResource(R.string.registration_email)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = CacheItSpacing.lg),
+                .padding(top = CacheItSpacing.sm),
         )
 
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") },
+            label = { Text(stringResource(R.string.registration_username)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = CacheItSpacing.sm),
@@ -84,7 +104,7 @@ fun RegistrationScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text((stringResource(R.string.registration_password))) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = CacheItSpacing.sm),
@@ -98,6 +118,9 @@ fun RegistrationScreen(
                 .padding(top = CacheItSpacing.sm),
         )
 
+        Text((stringResource(R.string.registration_password_note)),
+            style = TypeCaption,
+            color = MaterialTheme.colorScheme.onPrimary)
         // TODO: generate + wrap MEK client-side, call register API, then onRegistrationSuccess()
         Button(
             onClick = onRegistrationSuccess,
@@ -105,11 +128,11 @@ fun RegistrationScreen(
                 .fillMaxWidth()
                 .padding(top = CacheItSpacing.xl),
         ) {
-            Text("Create account")
+            Text((stringResource(R.string.registration_request)))
         }
 
         TextButton(onClick = onNavigateToLogin) {
-            Text("Already have an account? Log in")
+            Text((stringResource(R.string.registration_account_exists)))
         }
     }
 }

@@ -46,5 +46,20 @@
     <string name="welcome_greeting">Welcome</string>
     <string name="welcome_get_started">Let\'s Get Started</string>
     <string name="welcome_account_exists">Already have an account?</string>
+    <string name="registration_title">Create your account</string>
+    <string name="registration_subtitle">Fill out the form and begin noting just for yourself</string>
+    <string name="registration_email">Email</string>
+    <string name="registration_username">Username</string>
+    <string name="registration_accountholder">Full Name</string>
+    <string name="registration_password">Password</string>
+    <string name="registration_password_note">Note: Make your password secure, use a mix of upper and lowercase letters, numbers and symbols. Add it to a password manager, if you use one</string>
+    <string name="login_title">Log into your account</string>
+    <string name="login_subtitle">Get back to your notes</string>
+    <string name="login_identifier">Email or Username</string>
+    <string name="login_password">Password</string>
+    <string name="registration_request">Let\'s get started</string>
+    <string name="login_request">Log in</string>
+    <string name="registration_account_exists">Already have an account? Press here</string>
+    <string name="login_no_account">Don\'t have an account yet? Press here</string>
 
 </resources>

@@ -15,6 +15,7 @@ val Neutral600 = Color(0xFF2D2D2D)
 val Neutral700 = Color(0xFF1A1A1A)
 val Neutral800 = Color(0xFF111827)
 val Neutral900 = Color(0xFF0D0D0D)
+val Black = Color(0XFF000000)
 
 // Status
 val StatusSuccessLight = Color(0xFF16A34A)
