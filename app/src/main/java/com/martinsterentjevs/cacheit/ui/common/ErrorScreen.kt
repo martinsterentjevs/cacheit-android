@@ -1,4 +1,4 @@
-package com.martinsterentjevs.cacheit.ui.error
+package com.martinsterentjevs.cacheit.ui.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.martinsterentjevs.cacheit.ui.theme.CacheItRadius
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeBody
 import com.martinsterentjevs.cacheit.ui.theme.TypeLabel
