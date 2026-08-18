@@ -1,22 +1,27 @@
 package com.martinsterentjevs.cacheit
 
-import android.annotation.SuppressLint
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.martinsterentjevs.cacheit.ui.auth.LoginScreen
-import com.martinsterentjevs.cacheit.ui.error.ErrorScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.martinsterentjevs.cacheit.ui.common.PopupHost
+import com.martinsterentjevs.cacheit.ui.common.PopupHostViewModel
 import com.martinsterentjevs.cacheit.ui.navigation.CacheItNavHost
-import com.martinsterentjevs.cacheit.ui.onboarding.WelcomeScreen
-import com.martinsterentjevs.cacheit.ui.theme.CacheItTheme
 
 @Composable
-fun CacheItApp (){
-    CacheItNavHost()
-}
+fun CacheItApp(popupHostViewModel: PopupHostViewModel = hiltViewModel()) {
+    val snackbarHostState = remember { SnackbarHostState() }
 
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+        Box(modifier = Modifier.padding(padding)) {
+            CacheItNavHost()
+        }
+    }
+
+    PopupHost(events = popupHostViewModel.popupController.events, snackbarHostState = snackbarHostState)
+}

@@ -1,7 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
+
 
 android {
     namespace = "com.martinsterentjevs.cacheit"
@@ -20,7 +24,11 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.97:9001/\"")
+        }
         release {
+            buildConfigField("String", "SERVER_BASE_URL", "\"http://10.0.2.2:8080/\"")
             optimization {
                 enable = false
             }
@@ -33,6 +41,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     buildToolsVersion = "36.1.0"
 }
@@ -61,6 +70,22 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    //TEMPORARY
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.bouncycastle)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    implementation(libs.hilt.navigation.compose)
+    ksp(libs.androidx.hilt.compiler)
+
+    testImplementation(libs.mockito.core)
+
+    implementation(libs.retrofit)
+
+    implementation(libs.retrofit.kotlinx.serialization)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.kotlinx.serialization.json)
+    // TEMPORARY
+    implementation(libs.androidx.compose.icons.extended)
 }
