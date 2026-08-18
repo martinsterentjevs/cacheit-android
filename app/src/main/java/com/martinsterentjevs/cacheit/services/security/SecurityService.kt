@@ -1,18 +1,19 @@
 package com.martinsterentjevs.cacheit.services.security
 
 import android.content.Context
+import android.os.Build
 import com.martinsterentjevs.cacheit.services.security.SharedPreferencesLocalStore
 
 /**
  * Single public entry point for local security-adjacent storage. Everything
- * underneath — [KeyStoreService], [LocalStore], the alias/key enums — is
+ * underneath - [KeyStoreService], [LocalStore], the alias/key enums - is
  * internal; callers never choose between Keystore and plain storage
  * themselves, they call the method that already encodes that choice.
  *
  * Naming convention for expansion: a plain value gets `getX`/`setX`
  * (backed by [LocalStore] alone); a value needing on-device confidentiality
  * gets `getSecureX`/`setSecureX` (backed by [LocalStore] + [KeyStoreService]
- * together — see [getSecureMek] for the composition pattern to copy).
+ * together - see [getSecureMek] for the composition pattern to copy).
  *
  * `getSecureX` calls only ever reach real Keystore hardware through
  * [AndroidKeyStoreService], so any test exercising them needs the
@@ -33,7 +34,7 @@ class SecurityService internal constructor(
 
     // ---- Plain (local-only) values ----
 
-    /** Account salt — not secret, just needs to be consistent across app launches. Null on cache miss (fetch from the server's salt-lookup endpoint). */
+    /** Account salt - not secret, just needs to be consistent across app launches. Null on cache miss (fetch from the server's salt-lookup endpoint). */
     fun getSalt(): ByteArray? = localStore.getBytes(LocalCacheKey.ACCOUNT_SALT)
 
     fun setSalt(salt: ByteArray) = localStore.putBytes(LocalCacheKey.ACCOUNT_SALT, salt)
@@ -44,7 +45,7 @@ class SecurityService internal constructor(
 
     /**
      * Cached, already-unwrapped MEK for this session. Null on cache miss or
-     * on invalidation — callers must treat null the same way regardless of
+     * on invalidation - callers must treat null the same way regardless of
      * cause: fall back to re-deriving the MEK from the MUK-wrapped copy via
      * password re-entry, never treat it as an error state.
      */
@@ -63,9 +64,50 @@ class SecurityService internal constructor(
         localStore.putBytes(LocalCacheKey.MEK_SESSION_ENVELOPE, envelope)
     }
 
-    /** Call on logout and on password change — the cached MEK is stale the moment either happens. */
+    /** Call on logout and on password change - the cached MEK is stale the moment either happens. */
     fun clearSecureMek() {
         localStore.remove(LocalCacheKey.MEK_SESSION_ENVELOPE)
         keyStoreService.invalidate(CacheAlias.MEK_SESSION_CACHE)
+    }
+    // ---- Session (plain - see note on hardening below) ----
+
+    /**
+     * Bearer tokens for the REST API - not part of the zero-trust crypto boundary
+     * (that's the MEK/MUK pair above), so plain storage is an acceptable MVP
+     * trade-off. Revisit if these need Keystore wrapping before a wider release -
+     * tracked as a known gap, not a silent omission.
+     */
+    fun getAccessToken(): String? = localStore.getString(LocalCacheKey.ACCESS_TOKEN)
+    fun getRefreshToken(): String? = localStore.getString(LocalCacheKey.REFRESH_TOKEN)
+    fun getAccountId(): String? = localStore.getString(LocalCacheKey.ACCOUNT_ID)
+
+    fun setSession(accountId: String, accessToken: String, refreshToken: String) {
+        localStore.putString(LocalCacheKey.ACCOUNT_ID, accountId)
+        localStore.putString(LocalCacheKey.ACCESS_TOKEN, accessToken)
+        localStore.putString(LocalCacheKey.REFRESH_TOKEN, refreshToken)
+    }
+
+    /** Call on logout alongside clearSecureMek(). */
+    fun clearSession() {
+        localStore.remove(LocalCacheKey.ACCOUNT_ID)
+        localStore.remove(LocalCacheKey.ACCESS_TOKEN)
+        localStore.remove(LocalCacheKey.REFRESH_TOKEN)
+    }
+    /**
+     * Stable per-install identifier, generated once on first access and cached
+     * thereafter. Not tied to hardware (no IMEI/serial) - a fresh UUID is
+     * sufficient since its only job is letting the server scope refresh tokens
+     * and the device-sessions list to a specific install, not to a physical
+     * device across reinstalls.
+     */
+    fun getOrCreateDeviceId(): String =
+        localStore.getString(LocalCacheKey.DEVICE_ID) ?: run {
+            val generated = java.util.UUID.randomUUID().toString()
+            localStore.putString(LocalCacheKey.DEVICE_ID, generated)
+            generated
+        }
+
+    fun getDeviceName(): String {
+        return "${Build.MANUFACTURER} ${Build.MODEL}"
     }
 }

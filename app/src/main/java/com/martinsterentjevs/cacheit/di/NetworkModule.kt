@@ -2,16 +2,16 @@ package com.martinsterentjevs.cacheit.di
 
 import com.martinsterentjevs.cacheit.BuildConfig
 import com.martinsterentjevs.cacheit.network.auth.AuthApi
-import com.martinsterentjevs.cacheit.services.http.cacheItJson
+import com.martinsterentjevs.cacheit.network.cacheItJson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Singleton
 
 /**
