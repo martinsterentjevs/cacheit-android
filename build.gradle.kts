@@ -5,4 +5,5 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("com.google.dagger.hilt.android") version "2.60.1" apply false
     id("com.google.devtools.ksp") version "2.3.11" apply false
+
 }

@@ -24,6 +24,7 @@ retrofit= "3.0.0"
 retrofitconverter="3.0.0"
 okhttp = "5.4.0"
 kotlinxSerializationJson = "1.11.0"
+mockito = "5.23.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,15 +58,15 @@ androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", vers
 
 androidx-compose-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson"}
 retrofit = {group = "com.squareup.retrofit2", name="retrofit", version.ref = "retrofit"}
-retrofitconverter = {group = "com.squareup.retrofit2", name="converter-gson", version.ref = "retrofitconverter"}
+
 retrofit-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

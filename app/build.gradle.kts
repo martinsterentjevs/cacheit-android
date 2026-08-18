@@ -24,7 +24,11 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.97:9001/\"")
+        }
         release {
+            buildConfigField("String", "SERVER_BASE_URL", "\"http://10.0.2.2:8080/\"")
             optimization {
                 enable = false
             }
@@ -37,6 +41,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     buildToolsVersion = "36.1.0"
 }
@@ -73,9 +78,10 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     ksp(libs.androidx.hilt.compiler)
 
-    implementation(libs.gson)
+    testImplementation(libs.mockito.core)
+
     implementation(libs.retrofit)
-    implementation(libs.retrofitconverter)
+
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
