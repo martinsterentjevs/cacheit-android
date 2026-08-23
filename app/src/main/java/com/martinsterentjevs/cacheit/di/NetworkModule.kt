@@ -1,8 +1,10 @@
 package com.martinsterentjevs.cacheit.di
 
 import com.martinsterentjevs.cacheit.BuildConfig
+import com.martinsterentjevs.cacheit.network.AuthInterceptor
 import com.martinsterentjevs.cacheit.network.auth.AuthApi
 import com.martinsterentjevs.cacheit.network.cacheItJson
+import com.martinsterentjevs.cacheit.network.note.NoteApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,8 +27,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val builder = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor) // added first so debug logging below shows the real outgoing header
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
@@ -34,6 +37,7 @@ object NetworkModule {
         }
         return builder.build()
     }
+
 
     @Provides
     @Singleton
@@ -49,4 +53,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNoteApi(retrofit: Retrofit): NoteApi = retrofit.create(NoteApi::class.java)
+
 }
