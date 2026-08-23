@@ -2,7 +2,6 @@ package com.martinsterentjevs.cacheit.ui.note
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
-import android.util.Log
 import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,17 +16,16 @@ import com.martinsterentjevs.cacheit.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.Instant
-import java.util.MissingResourceException
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -100,7 +98,7 @@ class NoteEditViewModel @Inject constructor(
                 isLoadInFlight = false
             } catch (ex: Exception) {
                 popupController.show(UiEvent.Snackbar("Failed to get account ID. If this happens again, refresh your session."))
-                Log.e(TAG, "load: Failed Loading operation ${ex.message}")
+                e(TAG, "load: Failed Loading operation ${ex.message}")
             } finally {
                 isLoadInFlight = false
             }

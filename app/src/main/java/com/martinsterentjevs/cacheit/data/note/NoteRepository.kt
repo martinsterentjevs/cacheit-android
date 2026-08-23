@@ -101,7 +101,7 @@ internal class NoteRepositoryImpl @Inject constructor(
             // than surfacing NoteFlowException, per "local storage is the fallback" decision.
             Log.w(TAG, "getNotes: server unreachable, serving local cache", e)
             noteDao.getAll().map { it.toDto() } to true
-        } catch (e: HttpException) {
+        } catch (_: HttpException) {
             // A real server-side error (4xx/5xx) is not "unreachable" - don't paper over it
             // with stale cache data, surface it the same as every other endpoint does.
             throw NoteFlowException("Couldn't sync your notes - try again")
@@ -199,7 +199,7 @@ internal class NoteRepositoryImpl @Inject constructor(
         block()
     } catch (e: HttpException) {
         throw NoteFlowException(httpErrors[e.code()] ?: genericMessage)
-    } catch (e: IOException) {
+    } catch (_: IOException) {
         throw NoteFlowException("Can't reach the server. Check your connection.")
     }
 

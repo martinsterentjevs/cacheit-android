@@ -10,12 +10,10 @@ import androidx.navigation.navArgument
 import com.martinsterentjevs.cacheit.ui.account.AccountOverviewScreen
 import com.martinsterentjevs.cacheit.ui.auth.LoginScreen
 import com.martinsterentjevs.cacheit.ui.auth.RegistrationScreen
-import com.martinsterentjevs.cacheit.ui.note.NoteCard
 import com.martinsterentjevs.cacheit.ui.note.NoteEditScreen
 import com.martinsterentjevs.cacheit.ui.note.NoteVersionScreen
 import com.martinsterentjevs.cacheit.ui.note.NotesListScreen
 import com.martinsterentjevs.cacheit.ui.onboarding.WelcomeScreen
-import java.util.UUID
 
 /**
  * Single NavHost for the app. MainActivity hosts this and nothing else — every

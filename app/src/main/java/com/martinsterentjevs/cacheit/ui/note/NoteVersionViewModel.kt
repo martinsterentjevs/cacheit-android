@@ -95,7 +95,7 @@ class NoteVersionViewModel @Inject constructor(
     }
 
     fun restore(versionId: String) {
-        val current = _uiState.value as? NoteVersionUiState.Content ?: return
+        run {  (_uiState.value as? NoteVersionUiState.Content ?: return)}
         _uiState.update { (it as? NoteVersionUiState.Content)?.copy(isRestoring = true) ?: it }
 
         viewModelScope.launch {
