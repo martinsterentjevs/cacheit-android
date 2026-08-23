@@ -1,5 +1,6 @@
 # Server Sync Deference
 Created:12/08/2026 Last updated:12/08/2026
+Status: Depricated (relevant work item is complete)
 
 ## Owns 
 - Elements of the auth system that have changed or evolved under work on this repo
