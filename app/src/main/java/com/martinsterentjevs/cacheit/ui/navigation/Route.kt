@@ -15,6 +15,10 @@ sealed class Route(val route: String) {
         const val NEW_NOTE_ID = "new"
         fun createRoute(noteId: String = NEW_NOTE_ID) = "note_edit/$noteId"
     }
+    data object NoteHistory : Route("note_history/{noteId}") {
+        const val ARG_NOTE_ID = "noteId"
+        fun createRoute(noteId: String) = "note_history/$noteId"
+    }
 
     data object AccountOverview : Route("account_overview")
 }

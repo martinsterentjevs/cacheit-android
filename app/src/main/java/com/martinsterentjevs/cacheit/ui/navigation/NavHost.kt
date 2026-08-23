@@ -10,9 +10,12 @@ import androidx.navigation.navArgument
 import com.martinsterentjevs.cacheit.ui.account.AccountOverviewScreen
 import com.martinsterentjevs.cacheit.ui.auth.LoginScreen
 import com.martinsterentjevs.cacheit.ui.auth.RegistrationScreen
+import com.martinsterentjevs.cacheit.ui.note.NoteCard
 import com.martinsterentjevs.cacheit.ui.note.NoteEditScreen
+import com.martinsterentjevs.cacheit.ui.note.NoteVersionScreen
 import com.martinsterentjevs.cacheit.ui.note.NotesListScreen
 import com.martinsterentjevs.cacheit.ui.onboarding.WelcomeScreen
+import java.util.UUID
 
 /**
  * Single NavHost for the app. MainActivity hosts this and nothing else — every
@@ -59,11 +62,32 @@ fun CacheItNavHost(
             )
         }
 
-        composable(Route.NotesList.route) {
+        composable(
+            route = Route.NoteHistory.route,
+            arguments = listOf(
+                navArgument(Route.NoteHistory.ARG_NOTE_ID) {
+                    type = NavType.StringType
+                }
+            ),
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString(Route.NoteHistory.ARG_NOTE_ID)
+                ?: return@composable
+
+            NoteVersionScreen(
+                noteId = noteId,
+                onBack = { navController.popBackStack() },
+                onRestored = {
+                    navController.popBackStack(Route.NotesList.route, inclusive = false)
+                },
+            )
+        }
+
+        composable(route = Route.NotesList.route) {
             NotesListScreen(
-                onOpenNote = { noteId -> navController.navigate(Route.NoteEdit.createRoute(noteId)) },
                 onCreateNote = { navController.navigate(Route.NoteEdit.createRoute()) },
+                onEditNote = { noteId -> navController.navigate(Route.NoteEdit.createRoute(noteId)) },
                 onOpenAccount = { navController.navigate(Route.AccountOverview.route) },
+                onHistory = { noteId -> navController.navigate(Route.NoteHistory.createRoute(noteId))}
             )
         }
 
