@@ -49,6 +49,7 @@ android {
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.compose.runtime.saveable)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx) // Flow/coroutine support for DAO methods
     ksp(libs.room.compiler)

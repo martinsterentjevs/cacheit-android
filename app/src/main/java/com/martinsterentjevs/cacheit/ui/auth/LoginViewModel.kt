@@ -1,5 +1,6 @@
 package com.martinsterentjevs.cacheit.ui.auth
 
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.auth.AuthRepository
 import com.martinsterentjevs.cacheit.services.crypto.CryptoService
 import com.martinsterentjevs.cacheit.services.security.SecurityService
@@ -18,7 +19,7 @@ class LoginViewModel @Inject constructor(
 
     fun submit(identifier: String, password: String) {
         if (identifier.isBlank() || password.isBlank()) {
-            popupController.show(UiEvent.Snackbar("Enter your email/username and password"))
+            popupController.show(UiEvent.Snackbar(R.string.snackbar_error_missing_credentials))
             return
         }
         launchAuthFlow {

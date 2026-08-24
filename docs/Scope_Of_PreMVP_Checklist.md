@@ -18,7 +18,7 @@ start) visible in one place rather than scattered across separate issues.
 ### Small items
 >Items that don't need large changes, targeted at one or two re-useable elements
 
-- [ ] Password text fields (hidden text, visibility toggle, single line)
+- [x] Password text fields (hidden text, visibility toggle, single line)
 - [ ] `NoteCard`'s `hasHistory` indicator: currently shown twice (corner cut + footer icon) -
   pick one after actually looking at both on-device, remove the other
 - [ ] Drawing lock release on back-navigation mid-draw: currently only released via the
@@ -38,7 +38,7 @@ start) visible in one place rather than scattered across separate issues.
 ### Medium items
 >Items that require some manual work.
 
-- [ ] Localization strings - replace any user-facing strings that are manually defined
+- [x] Localization strings - replace any user-facing strings that are manually defined
 - [ ] `NoteEditUiState.NotFound` copy: currently reads as permanent ("This note couldn't be
   found") but the real cause may just be "hasn't synced down to this device yet." Needs real
   logic (check pending-sync state), not just a copy change.

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.martinsterentjevs.cacheit.R
+import com.martinsterentjevs.cacheit.ui.common.components.PasswordField
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeCaption
 import com.martinsterentjevs.cacheit.ui.theme.TypeLabel
@@ -66,22 +67,25 @@ fun RegistrationScreen(
 
         OutlinedTextField(name, { name = it }, enabled = fieldsEnabled,
             label = { Text(stringResource(R.string.registration_accountholder)) },
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.lg))
+            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.lg),
+            singleLine = true)
 
         OutlinedTextField(email, { email = it }, enabled = fieldsEnabled,
             label = { Text(stringResource(R.string.registration_email)) },
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm))
+            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm),
+            singleLine = true)
 
         OutlinedTextField(username, { username = it }, enabled = fieldsEnabled,
             label = { Text(stringResource(R.string.registration_username)) },
+            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm),
+            singleLine = true)
+
+        PasswordField(password, { password = it }, enabled = fieldsEnabled,
+            label = (stringResource(R.string.registration_password)),
             modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm))
 
-        OutlinedTextField(password, { password = it }, enabled = fieldsEnabled,
-            label = { Text(stringResource(R.string.registration_password)) },
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm))
-
-        OutlinedTextField(confirmPassword, { confirmPassword = it }, enabled = fieldsEnabled,
-            label = { Text("Confirm password") },
+        PasswordField(confirmPassword, { confirmPassword = it }, enabled = fieldsEnabled,
+            label = stringResource(R.string.registration_password_confirm) ,
             modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm))
 
         Text(stringResource(R.string.registration_password_note), style = TypeCaption,

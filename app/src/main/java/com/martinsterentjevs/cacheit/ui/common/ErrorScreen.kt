@@ -7,17 +7,21 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeBody
 import com.martinsterentjevs.cacheit.ui.theme.TypeLabel
 
 @Preview(showBackground = true)
 @Composable
-fun ErrorScreen(title:String = "Error",
-                message:String = "An unknown error has occurred"){
+fun ErrorScreen(title:String = stringResource(R.string.error_screen_title),
+                message:String = stringResource(R.string.error_screen_body)
+){
     Column(
-       modifier = Modifier.safeDrawingPadding()
+       modifier = Modifier
+           .safeDrawingPadding()
            .padding(CacheItSpacing.lg)
            .fillMaxSize()
     ) {

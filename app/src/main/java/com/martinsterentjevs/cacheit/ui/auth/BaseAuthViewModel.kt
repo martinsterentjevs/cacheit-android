@@ -2,6 +2,7 @@ package com.martinsterentjevs.cacheit.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.auth.AuthFlowException
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
@@ -21,6 +22,7 @@ sealed interface AuthEvent {
     data object Success : AuthEvent
 }
 
+
 /**
  * Shared submit-flow scaffolding for Login and Registration.
  * See docs/decisions/0001-ViewModel-Setup-setup.md for why this is a base
@@ -32,7 +34,6 @@ abstract class BaseAuthViewModel(
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
-
     // Channel, not SharedFlow - a nav event must fire exactly once per submit,
     // never replayed on recomposition/rotation the way a StateFlow would be.
     private val _events = Channel<AuthEvent>(Channel.BUFFERED)
@@ -46,13 +47,14 @@ abstract class BaseAuthViewModel(
                 block()
                 _events.send(AuthEvent.Success)
             } catch (e: AuthFlowException) {
-                popupController.show(UiEvent.Snackbar(e.userMessage))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(e.userMessage)))
             } catch (e: Exception) {
                 android.util.Log.e("AuthFlow","Unhandled auth error",e)
-                popupController.show(UiEvent.Snackbar("Something went wrong. Try again."))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error_general))
             } finally {
                 _uiState.value = AuthUiState.Idle
             }
         }
     }
+
 }

@@ -5,6 +5,7 @@ import android.content.ContentValues.TAG
 import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
@@ -97,7 +98,7 @@ class NoteEditViewModel @Inject constructor(
                 }
                 isLoadInFlight = false
             } catch (ex: Exception) {
-                popupController.show(UiEvent.Snackbar("Failed to get account ID. If this happens again, refresh your session."))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_alert_accountId_unavailable))
                 e(TAG, "load: Failed Loading operation ${ex.message}")
             } finally {
                 isLoadInFlight = false
@@ -130,12 +131,12 @@ class NoteEditViewModel @Inject constructor(
                                 isSaving = false,
                             ) ?: state
                         }
-                        popupController.show(UiEvent.Snackbar("Couldn't confirm your changes saved - check shortly"))
+                        popupController.show(UiEvent.Snackbar(R.string.note_version_restore_unconfirmed))
                     }
                 }
             } catch (e: NoteFlowException) {
                 _uiState.update { (it as? NoteEditUiState.Ready)?.copy(isSaving = false) ?: it }
-                popupController.show(UiEvent.Snackbar(e.userMessage))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(e.userMessage)))
             }
         }
     }
@@ -150,7 +151,9 @@ class NoteEditViewModel @Inject constructor(
                 _uiState.update { (it as? NoteEditUiState.Ready)?.copy(isDrawingLocked = true) ?: it }
                 locked.lockedAt?.let { startTtlCountdown(Instant.parse(it)) }
             } catch (e: NoteFlowException) {
-                popupController.show(UiEvent.Snackbar(e.userMessage))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,
+                    listOf(e.userMessage)
+                ))
             }
         }
     }
@@ -163,7 +166,7 @@ class NoteEditViewModel @Inject constructor(
             try {
                 noteRepository.releaseDrawingLock(noteId)
             } catch (e: NoteFlowException) {
-                popupController.show(UiEvent.Snackbar(e.userMessage))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(e.userMessage)))
             } finally {
                 stopTtlCountdown()
                 _uiState.update {
@@ -185,7 +188,7 @@ class NoteEditViewModel @Inject constructor(
                     _uiState.update {
                         (it as? NoteEditUiState.Ready)?.copy(isDrawingLocked = false, lockTtlRemaining = null) ?: it
                     }
-                    popupController.show(UiEvent.Snackbar("Drawing lock expired"))
+                    popupController.show(UiEvent.Snackbar(R.string.snackbar_drawing_lock_expired))
                     break
                 }
 
@@ -198,7 +201,10 @@ class NoteEditViewModel @Inject constructor(
                 ALERT_THRESHOLDS.firstOrNull { it >= remaining && it !in notifiedThresholds }?.let { threshold ->
                     notifiedThresholds += threshold
                     popupController.show(
-                        UiEvent.Snackbar("Drawing lock expires in ${threshold.toMinutes()}m - save to keep editing"),
+                        UiEvent.Snackbar(
+                                R.string.snackbar_alert_drawing_lock_time,
+                                listOf(threshold.toMinutes())
+                            )
                     )
                 }
 

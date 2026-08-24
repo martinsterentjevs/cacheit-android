@@ -2,6 +2,7 @@ package com.martinsterentjevs.cacheit.ui.note
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
@@ -38,7 +39,12 @@ class NoteListViewModel @Inject constructor(
             try {
                 val result = noteRepository.getNotes()
                 if (result.failedCount > 0) {
-                    popupController.show(UiEvent.Snackbar("Failed to decrypt ${result.failedCount} notes"))
+                   popupController.show(
+                    UiEvent.Snackbar(
+                        messageId = R.string.note_decrypt_failiure,
+                        formatArgs = listOf(result.failedCount)
+                    )
+                   )
                 }
                 _uiState.value = if (result.notes.isEmpty()) {
                     NoteListUiState.Empty

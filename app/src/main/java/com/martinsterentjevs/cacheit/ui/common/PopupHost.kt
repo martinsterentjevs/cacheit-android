@@ -10,35 +10,69 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.flow.Flow
 
 /** Owns event collection + dialog rendering. Snackbar positioning stays with whatever Scaffold hosts snackbarHostState. */
 @Composable
-fun PopupHost(events: Flow<UiEvent>, snackbarHostState: SnackbarHostState) {
-    var dialogEvent by remember { mutableStateOf<UiEvent.Dialog?>(null) }
+fun PopupHost(
+    events: Flow<UiEvent>,
+    snackbarHostState: SnackbarHostState
+) {
+    var pendingSnackbar by remember {
+        mutableStateOf<UiEvent.Snackbar?>(null)
+    }
+
+    var dialogEvent by remember {
+        mutableStateOf<UiEvent.Dialog?>(null)
+    }
 
     LaunchedEffect(events) {
         events.collect { event ->
             when (event) {
-                is UiEvent.Snackbar -> snackbarHostState.showSnackbar(
-                    message = event.message,
-                    actionLabel = event.actionLabel,
-                )
+                is UiEvent.Snackbar -> pendingSnackbar = event
                 is UiEvent.Dialog -> dialogEvent = event
             }
         }
     }
 
+    pendingSnackbar?.let { event ->
+        val message = stringResource(
+            id = event.messageId,
+            *event.formatArgs.toTypedArray()
+        )
+
+        LaunchedEffect(event) {
+            snackbarHostState.showSnackbar(
+                message = message,
+                actionLabel = event.actionLabel,
+            )
+
+            pendingSnackbar = null
+        }
+    }
+
     dialogEvent?.let { dialog ->
         AlertDialog(
-            onDismissRequest = { dialogEvent = null },
-            title = { Text(dialog.title) },
-            text = { Text(dialog.message) },
-            confirmButton = {
-                TextButton(onClick = { dialog.onConfirm(); dialogEvent = null }) {
-                    Text(dialog.confirmLabel)
-                }
+            onDismissRequest = {
+                dialogEvent = null
             },
+            title = {
+                Text(stringResource(dialog.titleId))
+            },
+            text = {
+                Text(stringResource(dialog.messageId))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialog.onConfirm()
+                        dialogEvent = null
+                    }
+                ) {
+                    Text(stringResource(dialog.confirmLabelId))
+                }
+            }
         )
     }
 }

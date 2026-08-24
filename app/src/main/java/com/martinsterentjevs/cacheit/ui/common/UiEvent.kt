@@ -1,11 +1,20 @@
 package com.martinsterentjevs.cacheit.ui.common
 
+import androidx.annotation.StringRes
+import com.martinsterentjevs.cacheit.R
+
 sealed interface UiEvent {
-    data class Snackbar(val message: String, val actionLabel: String? = null) : UiEvent
+
+    data class Snackbar(
+        @StringRes val messageId: Int,
+        val formatArgs: List<Any> = emptyList(),
+        val actionLabel: String? = null,
+    ) : UiEvent
+
     data class Dialog(
-        val title: String,
-        val message: String,
-        val confirmLabel: String = "OK",
+        @StringRes val titleId: Int,
+        @StringRes val messageId: Int,
+        @StringRes val confirmLabelId: Int = R.string.ok,
         val onConfirm: () -> Unit = {},
     ) : UiEvent
 }

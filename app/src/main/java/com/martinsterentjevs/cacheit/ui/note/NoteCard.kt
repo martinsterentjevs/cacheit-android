@@ -25,8 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.martinsterentjevs.cacheit.R.string
 import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeBody
@@ -54,12 +56,7 @@ fun FaceNote.toCardUiState() = NoteCardUiState(
 )
 
 /**
- * hasHistory is signaled by a bigger cut on the bottom-right corner only (a "dog-ear"),
- * not a badge/icon - keeps the corner clean when there's nothing to show, and reads at a
- * glance without competing with the hasDrawing icon in the opposite corner.
- *
- * TODO: content descriptions below are literal strings - move to strings.xml to match the
- * stringResource() pattern already used in LoginScreen/RegistrationScreen before shipping.
+ * hasHistory is signaled by a bigger cut on the bottom-right corner and an iconButton.
  */
 @Composable
 fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit) {
@@ -83,7 +80,9 @@ fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit)
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header row - fixed height per design system's card header row spec.
             Row(
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -98,18 +97,22 @@ fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit)
                 if (state.isLocked) {
                     Icon(
                         Icons.Filled.Lock,
-                        contentDescription = "Locked for drawing on another device",
+                        contentDescription = stringResource(string.note_drawing_locked),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp).padding(end = CacheItSpacing.xs),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = CacheItSpacing.xs),
                     )
                 }
 
                 if (state.hasDrawing) {
                     Icon(
                         Icons.Filled.Brush,
-                        contentDescription = "Contains a drawing",
+                        contentDescription = stringResource(string.note_info_drawing_true),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp).padding(end = CacheItSpacing.xs),
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = CacheItSpacing.xs),
                     )
                 }
 
@@ -148,7 +151,7 @@ fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit)
                     ) {
                         Icon(
                             imageVector = Icons.Default.History,
-                            contentDescription = "View note history",
+                            contentDescription = stringResource(string.note_view_history),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }

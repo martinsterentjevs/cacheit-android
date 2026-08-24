@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,8 +26,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.ui.navigation.Route
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeCaption
@@ -60,22 +61,29 @@ fun NoteEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (noteId == null || noteId == Route.NoteEdit.NEW_NOTE_ID) "New note" else "Edit note") },
+                title = { Text(if (noteId == null || noteId == Route.NoteEdit.NEW_NOTE_ID) stringResource(
+                    R.string.note_create_title
+                ) else stringResource(R.string.note_edit_title)
+                ) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(
+                            R.string.navigation_back
+                        ))
                     }
                 },
             )
         },
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             contentAlignment = Alignment.Center,
         ) {
             when (val state = uiState) {
                 NoteEditUiState.Loading -> CircularProgressIndicator()
-                NoteEditUiState.NotFound -> Text("This note couldn't be found.")
+                NoteEditUiState.NotFound -> Text(stringResource(R.string.note_edit_note_not_found))
                 is NoteEditUiState.Ready -> NoteEditContent(state, viewModel)
             }
         }
@@ -93,9 +101,10 @@ private fun NoteEditContent(state: NoteEditUiState.Ready, viewModel: NoteEditVie
         OutlinedTextField(
             value = state.note.title,
             onValueChange = viewModel::onTitleChanged,
-            label = { Text("Title") },
+            label = { Text(stringResource(R.string.note_edit_note_title)) },
             enabled = !state.isSaving,
             modifier = Modifier.fillMaxWidth(),
+            maxLines = 1,
         )
 
         OutlinedTextField(
@@ -103,12 +112,16 @@ private fun NoteEditContent(state: NoteEditUiState.Ready, viewModel: NoteEditVie
             onValueChange = viewModel::onBodyChanged,
             label = { Text("Body") },
             enabled = !state.isSaving,
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = CacheItSpacing.sm),
         )
 
         // Drawing entry point only - the actual canvas UI is Issue #6's scope, not this one.
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.md),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = CacheItSpacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(Icons.Filled.Brush, contentDescription = null)
@@ -117,12 +130,17 @@ private fun NoteEditContent(state: NoteEditUiState.Ready, viewModel: NoteEditVie
                     if (state.isDrawingLocked) viewModel.releaseDrawingLock() else viewModel.acquireDrawingLock()
                 },
             ) {
-                Text(if (state.isDrawingLocked) "Editing drawing" else "Add drawing")
+                Text(if (state.isDrawingLocked) stringResource(R.string.note_edit_edit_drawing) else stringResource(
+                    R.string.note_edit_add_drawing
+                ))
             }
 
             state.lockTtlRemaining?.let { remaining ->
                 Text(
-                    text = "expires in ${remaining.toMinutes()}m",
+                    text = stringResource(
+                        R.string.note_edit_drawing_lock_ttl,
+                        remaining.toMinutes()
+                    ),
                     style = TypeCaption,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -130,11 +148,15 @@ private fun NoteEditContent(state: NoteEditUiState.Ready, viewModel: NoteEditVie
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.xl),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = CacheItSpacing.xl),
             horizontalArrangement = Arrangement.End,
         ) {
             TextButton(onClick = viewModel::save, enabled = !state.isSaving) {
-                Text(if (state.isSaving) "Saving..." else "Save")
+                Text(if (state.isSaving) stringResource(R.string.saving_in_progress) else stringResource(
+                    R.string.save
+                ))
             }
         }
     }

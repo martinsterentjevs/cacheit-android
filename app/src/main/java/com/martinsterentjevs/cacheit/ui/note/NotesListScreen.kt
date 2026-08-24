@@ -21,9 +21,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.ui.theme.CacheItTheme
 import com.martinsterentjevs.cacheit.ui.theme.TypeBody
 
@@ -50,7 +52,7 @@ fun NotesListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Notes") },
+                title = { Text(stringResource(R.string.note_list_title)) },
                 actions = {
                     IconButton(onClick = onOpenAccount) {
                         Icon(Icons.Filled.AccountCircle, contentDescription = "Account")
@@ -73,7 +75,7 @@ fun NotesListScreen(
 
             when (val state = uiState) {
                 is NoteListUiState.Loading -> CircularProgressIndicator()
-                is NoteListUiState.Empty -> Text("No notes added yet.", style = TypeBody)
+                is NoteListUiState.Empty -> Text(stringResource(R.string.note_list_empty_notice), style = TypeBody)
                 is NoteListUiState.Error -> Text(state.message, style = TypeBody)
                 is NoteListUiState.Content -> LazyColumn {
                     items(state.notes, key = { it.noteId ?: it.title }) { note ->
