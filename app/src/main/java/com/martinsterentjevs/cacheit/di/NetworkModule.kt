@@ -3,6 +3,7 @@ package com.martinsterentjevs.cacheit.di
 import com.martinsterentjevs.cacheit.BuildConfig
 import com.martinsterentjevs.cacheit.network.AuthInterceptor
 import com.martinsterentjevs.cacheit.network.auth.AuthApi
+import com.martinsterentjevs.cacheit.network.auth.TokenAuthenticator
 import com.martinsterentjevs.cacheit.network.cacheItJson
 import com.martinsterentjevs.cacheit.network.note.NoteApi
 import dagger.Module
@@ -27,9 +28,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor, tokenAuthenticator: TokenAuthenticator): OkHttpClient {
         val builder = OkHttpClient.Builder()
             .addInterceptor(authInterceptor) // added first so debug logging below shows the real outgoing header
+            .authenticator(tokenAuthenticator)
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
