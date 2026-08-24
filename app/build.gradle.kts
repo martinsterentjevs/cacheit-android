@@ -25,7 +25,7 @@ android {
 
     buildTypes {
         debug{
-            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.97:9001/\"")
+            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.133:9001/\"")
         }
         release {
             buildConfigField("String", "SERVER_BASE_URL", "\"http://10.0.2.2:8080/\"")
@@ -48,6 +48,10 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx) // Flow/coroutine support for DAO methods
+    ksp(libs.room.compiler)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)

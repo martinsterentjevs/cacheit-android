@@ -8,7 +8,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.martinsterentjevs.cacheit.ui.common.PopupHost
 import com.martinsterentjevs.cacheit.ui.common.PopupHostViewModel
 import com.martinsterentjevs.cacheit.ui.navigation.CacheItNavHost
