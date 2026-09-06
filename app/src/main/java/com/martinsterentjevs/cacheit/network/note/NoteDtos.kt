@@ -1,6 +1,7 @@
 package com.martinsterentjevs.cacheit.network.note
 
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant
 
 /**
  * Mirrors server-side NoteDto (cacheit-server: dtos/note/NoteDto.kt) field-for-field.
@@ -13,7 +14,7 @@ import kotlinx.serialization.Serializable
 data class NoteDto(
     val noteId: String?,
     val userId: String,
-    val lastModifiedAt: String,
+    val lastModifiedAt: Instant,
     val isDeleted: Boolean,
     val hasHistory:Boolean,
     val encTitle: String,

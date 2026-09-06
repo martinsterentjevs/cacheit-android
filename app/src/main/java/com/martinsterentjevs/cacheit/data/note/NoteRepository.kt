@@ -16,6 +16,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.time.Instant
 
 private const val TAG = "NoteRepository"
 
@@ -26,9 +27,9 @@ class NoteFlowException(val userMessage: String) : Exception(userMessage)
 data class FaceNote(
     val noteId: String?,
     val userId: String,
-    val lastModifiedAt: String,
+    val lastModifiedAt: Instant,
     val isDeleted: Boolean,
-    val hasHistory:Boolean,
+    val hasHistory: Boolean,
     val title: String,
     val body: String?,
     val drawing: String?,

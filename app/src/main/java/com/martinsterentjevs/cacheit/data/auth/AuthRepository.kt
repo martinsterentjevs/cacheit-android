@@ -34,6 +34,7 @@ interface AuthRepository {
         deviceId: String,
         deviceName: String
     ): AuthSession
+    suspend fun logout()
 }
 
 internal class AuthRepositoryImpl @Inject constructor(
@@ -91,6 +92,7 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     private fun ByteArray.toBase64(): String = Base64.getEncoder().encodeToString(this)
 
+    override suspend fun logout() = authCall("Couldn't log out - try again") { authApi.logout() }
     private fun AccountSessionResponse.toSession() = AuthSession(userId,
         deviceId = deviceId, accessToken, refreshToken, encMekEnvelope)
 }

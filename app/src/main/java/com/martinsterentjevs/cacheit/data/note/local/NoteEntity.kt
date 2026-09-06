@@ -26,7 +26,7 @@ data class NoteEntity(
 fun NoteDto.toEntity() = NoteEntity(
     noteId = requireNotNull(noteId) { "Cannot cache a note with no noteId" },
     userId = userId,
-    lastModifiedAt = lastModifiedAt,
+    lastModifiedAt = lastModifiedAt.toString(),
     isDeleted = isDeleted,
     hasHistory = hasHistory,
     encTitle = encTitle,
@@ -39,7 +39,7 @@ fun NoteDto.toEntity() = NoteEntity(
 fun NoteEntity.toDto() = NoteDto(
     noteId = noteId,
     userId = userId,
-    lastModifiedAt = lastModifiedAt,
+    lastModifiedAt = kotlin.time.Instant.parse(lastModifiedAt),
     isDeleted = isDeleted,
     hasHistory = hasHistory,
     encTitle = encTitle,

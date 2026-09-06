@@ -19,21 +19,22 @@ start) visible in one place rather than scattered across separate issues.
 >Items that don't need large changes, targeted at one or two re-useable elements
 
 - [x] Password text fields (hidden text, visibility toggle, single line)
-- [ ] `NoteCard`'s `hasHistory` indicator: currently shown twice (corner cut + footer icon) -
-  pick one after actually looking at both on-device, remove the other
-- [ ] Drawing lock release on back-navigation mid-draw: currently only released via the
+- [x] `NoteCard`'s `hasHistory` indicator: ~~currently shown twice (corner cut + footer icon) -
+  pick one after actually looking at both on-device, remove the other~~ Remains showing both - view [ADR 0003](decisions/0003-Note-History-Marking.md)
+- [x] Drawing lock release on back-navigation mid-draw: currently only released via the
   in-screen toggle button, not on backing out of the screen while still locked
-- [ ] Pull-to-refresh on `NotesListScreen` - currently only loads once on screen entry via
+- [x] Pull-to-refresh on `NotesListScreen` - currently only loads once on screen entry via
   `LaunchedEffect`; no swipe gesture re-triggers `load()`
 - [ ] Empty-state CTA button on `NotesListScreen` - the empty-state copy ("No notes added
   yet.") already exists, the paired CTA button does not (flagged in the screen's own header
   comment already, just not previously tracked here)
-- [ ] `isFromCache` indicator - `NotesResult.isFromCache` exists in state but nothing in
+- [x] `isFromCache` indicator - `NotesResult.isFromCache` exists in state but nothing in
   `NotesListScreen` renders a "showing saved notes, couldn't refresh" treatment for it
-- [ ] Delete-note UI entry point - `NoteRepository.deleteNote()` exists, no screen calls it
+- [x] Delete-note UI entry point - `NoteRepository.deleteNote()` exists, no screen calls it
   yet (not on `NoteCard`, not on `NoteEditScreen`) - needed for the first testing path below
 - [ ] Run `ktlintFormat` across everything touched by this issue before closing it out
-
+- [?] Add project icon ad app icon
+- [x] Separate sync and mutation in-flight guards - load()/refresh() share a sync guard, while note deletion uses its own mutation guard.
 ---
 ### Medium items
 >Items that require some manual work.
@@ -42,7 +43,7 @@ start) visible in one place rather than scattered across separate issues.
 - [ ] `NoteEditUiState.NotFound` copy: currently reads as permanent ("This note couldn't be
   found") but the real cause may just be "hasn't synced down to this device yet." Needs real
   logic (check pending-sync state), not just a copy change.
-- [ ] Cold-start session restoration: app currently doesn't check for a valid persisted
+- [x] Cold-start session restoration: app currently doesn't check for a valid persisted
   session on launch and route straight to the note list - forces a fresh login even when a
   valid session already exists locally. Distinct from `TokenAuthenticator`'s refresh-on-401
   job below - this is "do we even try the saved session," not "what happens when it expires."
@@ -56,12 +57,10 @@ start) visible in one place rather than scattered across separate issues.
 ### Large items
 > Items that may take chunks of commits for larger missing feature elements
 
-- [ ] NoteEditScreen redesign - canvas with text lines approach. **Text and drawing are
-  exclusive per note, not co-existing in one canvas** (per the original wireframe's pencil/
-  cursor mode toggle) - this is a real constraint on the redesign, not just a visual choice.
-  The current scaffold shows a body text field and a drawing-entry button simultaneously on
-  the same screen; the redesign replaces that with an exclusive mode toggle, not adds to it.
-- [ ] NoteCard crystallization - final visual design definition for the card (layout, spacing,
+- [x] NoteEditScreen redesign - **NEW [25/08/2026]:** canvas with text lines. 
+  Viewmodel UI has 4 modes `Create`, `View`, `TextEdit` and `DrawingEdit` modes.
+  Each edit mode allows limited interaction with elements. View [ADR 0004](decisions/0004-NoteEdit-Redesign-Criteria.md)
+- [x] NoteCard crystallization - final visual design definition for the card (layout, spacing,
   actual treatment of the `hasHistory`/`hasDrawing` indicators once decided above), not just
   the structural skeleton currently in place
 - [ ] Self-host capability stubs - inactive UI groundwork (e.g. a settings field for a custom
@@ -70,7 +69,7 @@ start) visible in one place rather than scattered across separate issues.
   self-host networking/config work is not this issue's scope, just the UI hooks for it.
 - [ ] Session navigation: nav-graph gating for unauthenticated/expired-session state. Currently,
   nothing enforces where an unauthenticated user lands - no redirect point exists.
-- [ ] Session lifecycle: `TokenAuthenticator` (refresh-on-401, single-flight guard, AT
+- [x] Session lifecycle: `TokenAuthenticator` (refresh-on-401, single-flight guard, AT
   injection into pending requests). **Confirmed in scope for this issue** - the account
   currently has no real token lifecycle work beyond attaching tokens to authed requests
   (Issue #6), and cold start doesn't use saved tokens at all (see cold-start item above).
