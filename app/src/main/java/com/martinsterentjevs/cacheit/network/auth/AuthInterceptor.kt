@@ -13,7 +13,10 @@ private val securityService: SecurityService,
 ) : Interceptor {
 override fun intercept(chain: Interceptor.Chain): Response {
     val request = chain.request()
-    if (request.url.encodedPath.startsWith("/auth/")) return chain.proceed(request)
+    val path = request.url.encodedPath
+    // skips adding AccessToken for the register, login and refresh commands
+    val skipToken =path.startsWith("/auth/") && path != "/auth/logout"
+    if (skipToken) return chain.proceed(request)
 
     val token = securityService.getAccessToken() ?: return chain.proceed(request)
     val authorized = request.newBuilder()

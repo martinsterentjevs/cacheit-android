@@ -8,7 +8,7 @@ sealed class Route(val route: String) {
     data object Welcome : Route("welcome")
     data object Login : Route("login")
     data object Registration : Route("registration")
-    data object NotesList : Route("notes_list")
+    data object NoteList : Route("note_list")
 
     data object NoteEdit : Route("note_edit/{noteId}") {
         const val ARG_NOTE_ID = "noteId"

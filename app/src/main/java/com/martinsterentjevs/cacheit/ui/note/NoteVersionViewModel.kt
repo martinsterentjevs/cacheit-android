@@ -2,6 +2,7 @@ package com.martinsterentjevs.cacheit.ui.note
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.note.FaceNoteVersion
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
@@ -83,7 +84,7 @@ class NoteVersionViewModel @Inject constructor(
                     ) ?: it
                 }
             } catch (e: NoteFlowException) {
-                popupController.show(UiEvent.Snackbar(e.userMessage))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(e.userMessage)))
             }
         }
     }
@@ -107,11 +108,13 @@ class NoteVersionViewModel @Inject constructor(
                         // live content, only version metadata/previews) - same as ADR 0002's
                         // write-path spirit otherwise: don't navigate on unconfirmed data, let
                         // the next sync/local-cache read reconcile whatever the server holds.
-                        popupController.show(UiEvent.Snackbar("Couldn't confirm the restore - check shortly"))
+                        popupController.show(UiEvent.Snackbar(R.string.note_version_restore_unconfirmed))
                     }
                 }
             } catch (e: NoteFlowException) {
-                popupController.show(UiEvent.Snackbar(e.userMessage))
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,
+                    listOf(e.userMessage)
+                ))
             } finally {
                 _uiState.update { (it as? NoteVersionUiState.Content)?.copy(isRestoring = false) ?: it }
             }

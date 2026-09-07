@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Button
@@ -24,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.martinsterentjevs.cacheit.R
+import com.martinsterentjevs.cacheit.ui.common.components.PasswordField
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeBody
 import com.martinsterentjevs.cacheit.ui.theme.TypeTitle
@@ -37,7 +40,6 @@ fun LoginScreen(
     var identifier by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
@@ -50,6 +52,7 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .safeDrawingPadding()
+            .imePadding()
             .padding(CacheItSpacing.lg),
     ) {
         Text(stringResource(R.string.login_title), style = TypeTitle,
@@ -68,14 +71,16 @@ fun LoginScreen(
             label = { Text(stringResource(R.string.login_identifier)) },
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.xl),
+            singleLine = true,
         )
 
-        OutlinedTextField(
+
+        PasswordField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(stringResource(R.string.login_password)) },
+            label = stringResource(R.string.login_password),
             enabled = uiState !is AuthUiState.Loading,
-            modifier = Modifier.fillMaxWidth().padding(top = CacheItSpacing.sm),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Button(

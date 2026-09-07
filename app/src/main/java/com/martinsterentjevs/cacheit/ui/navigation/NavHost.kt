@@ -12,7 +12,7 @@ import com.martinsterentjevs.cacheit.ui.auth.LoginScreen
 import com.martinsterentjevs.cacheit.ui.auth.RegistrationScreen
 import com.martinsterentjevs.cacheit.ui.note.NoteEditScreen
 import com.martinsterentjevs.cacheit.ui.note.NoteVersionScreen
-import com.martinsterentjevs.cacheit.ui.note.NotesListScreen
+import com.martinsterentjevs.cacheit.ui.note.NoteListScreen
 import com.martinsterentjevs.cacheit.ui.onboarding.WelcomeScreen
 
 /**
@@ -41,7 +41,7 @@ fun CacheItNavHost(
         composable(Route.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate(Route.NotesList.route) {
+                    navController.navigate(Route.NoteList.route) {
                         popUpTo(Route.Welcome.route) { inclusive = true }
                     }
                 },
@@ -52,7 +52,7 @@ fun CacheItNavHost(
         composable(Route.Registration.route) {
             RegistrationScreen(
                 onRegistrationSuccess = {
-                    navController.navigate(Route.NotesList.route) {
+                    navController.navigate(Route.NoteList.route) {
                         popUpTo(Route.Welcome.route) { inclusive = true }
                     }
                 },
@@ -75,17 +75,16 @@ fun CacheItNavHost(
                 noteId = noteId,
                 onBack = { navController.popBackStack() },
                 onRestored = {
-                    navController.popBackStack(Route.NotesList.route, inclusive = false)
+                    navController.popBackStack(Route.NoteList.route, inclusive = false)
                 },
             )
         }
-
-        composable(route = Route.NotesList.route) {
-            NotesListScreen(
-                onCreateNote = { navController.navigate(Route.NoteEdit.createRoute()) },
+        composable(route = Route.NoteList.route) {
+            NoteListScreen(
                 onEditNote = { noteId -> navController.navigate(Route.NoteEdit.createRoute(noteId)) },
+                onCreateNote = { navController.navigate(Route.NoteEdit.createRoute()) },
                 onOpenAccount = { navController.navigate(Route.AccountOverview.route) },
-                onHistory = { noteId -> navController.navigate(Route.NoteHistory.createRoute(noteId))}
+                onHistory = { noteId -> navController.navigate(Route.NoteHistory.createRoute(noteId)) }
             )
         }
 

@@ -25,7 +25,7 @@ android {
 
     buildTypes {
         debug{
-            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.133:9001/\"")
+            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.134:9001/\"")
         }
         release {
             buildConfigField("String", "SERVER_BASE_URL", "\"http://10.0.2.2:8080/\"")
@@ -47,8 +47,13 @@ android {
 }
 
 dependencies {
+    implementation("com.github.jeziellago:compose-markdown:0.7.2")
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.compose.runtime.saveable)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx) // Flow/coroutine support for DAO methods
     ksp(libs.room.compiler)

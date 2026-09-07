@@ -1,4 +1,4 @@
-package com.martinsterentjevs.cacheit.ui.note
+package com.martinsterentjevs.cacheit.ui.note.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
@@ -25,13 +26,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.martinsterentjevs.cacheit.R.string
 import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.TypeBody
 import com.martinsterentjevs.cacheit.ui.theme.TypeCaption
 import com.martinsterentjevs.cacheit.ui.theme.TypeHeading
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 data class NoteCardUiState(
     val noteId: String,
@@ -49,43 +58,50 @@ fun FaceNote.toCardUiState() = NoteCardUiState(
     bodyPreview = body?.takeIf { it.isNotBlank() },
     hasDrawing = !drawing.isNullOrBlank(),
     hasHistory = hasHistory,
-    lastModifiedAt = lastModifiedAt,
+    lastModifiedAt = lastModifiedAt.toString(),
     isLocked = lockedByDeviceId != null,
-)
 
-/**
- * hasHistory is signaled by a bigger cut on the bottom-right corner only (a "dog-ear"),
- * not a badge/icon - keeps the corner clean when there's nothing to show, and reads at a
- * glance without competing with the hasDrawing icon in the opposite corner.
- *
- * TODO: content descriptions below are literal strings - move to strings.xml to match the
- * stringResource() pattern already used in LoginScreen/RegistrationScreen before shipping.
- */
-@Composable
-fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit) {
-    val cardShape = CutCornerShape(
-        topStart = 12.dp,
-        topEnd = 12.dp,
-        bottomStart = 12.dp,
-        bottomEnd = if (state.hasHistory) 16.dp else 12.dp,
     )
 
+/**
+ * hasHistory is signaled by a cut in the bottom-right corner and an iconButton.
+ */
+@Composable
+fun NoteCard(
+    state: NoteCardUiState,
+    isFromCache: Boolean,
+    onClick: () -> Unit,
+    onHistory: () -> Unit,
+    onDeleteNote: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cardShape = CutCornerShape(
+        topStart = 0.dp,
+        topEnd = if (state.hasDrawing) 16.dp else 0.dp,
+        bottomStart = 0.dp,
+        bottomEnd = if (state.hasHistory) 16.dp else 0.dp,
+    )
+    val borderColor = if (!isFromCache) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
     Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(.95f)
             .heightIn(min = 120.dp)
             .clip(cardShape)
             .background(MaterialTheme.colorScheme.surface)
-            .border(1.dp, MaterialTheme.colorScheme.outline, cardShape)
+            .border(1.dp, borderColor, cardShape)
             .clickable(onClick = onClick)
-            .padding(CacheItSpacing.md, CacheItSpacing.xl),
+
+            .padding(CacheItSpacing.md, CacheItSpacing.md),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header row - fixed height per design system's card header row spec.
             Row(
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically,
-            ) {
+
+                ) {
                 Text(
                     text = state.title,
                     style = TypeHeading,
@@ -98,23 +114,27 @@ fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit)
                 if (state.isLocked) {
                     Icon(
                         Icons.Filled.Lock,
-                        contentDescription = "Locked for drawing on another device",
+                        contentDescription = stringResource(string.note_drawing_locked),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp).padding(end = CacheItSpacing.xs),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = CacheItSpacing.xs),
                     )
                 }
 
                 if (state.hasDrawing) {
                     Icon(
                         Icons.Filled.Brush,
-                        contentDescription = "Contains a drawing",
+                        contentDescription = stringResource(string.note_info_drawing_true),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp).padding(end = CacheItSpacing.xs),
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = CacheItSpacing.xs),
                     )
                 }
-
+                val timestamp = formatNoteTimestamp(Instant.parse(state.lastModifiedAt), locale = LocalLocale.current.platformLocale)
                 Text(
-                    text = state.lastModifiedAt,
+                    text = timestamp,
                     style = TypeCaption,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -134,26 +154,90 @@ fun NoteCard(state: NoteCardUiState, onClick: () -> Unit, onHistory: () -> Unit)
 
             // Footer row - hasHistory badge kept here too (in addition to the corner cut)
             // until it's confirmed the corner alone reads clearly enough on-device.
-            if (state.hasHistory) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = CacheItSpacing.sm),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = CacheItSpacing.sm),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (state.hasHistory){
                     IconButton(
                         onClick = onHistory,
                         modifier = Modifier.size(CacheItSpacing.xl),
                     ) {
                         Icon(
                             imageVector = Icons.Default.History,
-                            contentDescription = "View note history",
+                            contentDescription = stringResource(string.note_view_history),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
-            }
+                IconButton(
+                    onClick = onDeleteNote,
+                    modifier = Modifier.size(CacheItSpacing.xl)
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(string.note_card_delete_note),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                }
             }
         }
     }
+}
+@Composable
+fun formatNoteTimestamp(
+    timestamp: Instant,
+    locale: Locale,
+
+): String {
+    val zone = ZoneId.systemDefault()
+
+
+
+    val dateTime = timestamp.atZone(zone)
+    val now = Instant.now().atZone(zone)
+
+    val time = dateTime.format(
+        DateTimeFormatter
+            .ofLocalizedTime(FormatStyle.SHORT)
+            .withLocale(locale)
+    )
+
+    return when {
+        dateTime.toLocalDate() == now.toLocalDate() ->
+            time
+
+        dateTime.toLocalDate() == now.toLocalDate().minusDays(1) ->
+            stringResource(string.timestamp_yesterday, time)
+
+        dateTime.toLocalDate().isAfter(
+            now.toLocalDate().minusDays(7)
+        ) ->
+            dateTime.format(
+                DateTimeFormatter.ofPattern(
+                    "EEEE HH:mm",
+                    locale
+                )
+            )
+
+        dateTime.year == now.year ->
+            dateTime.format(
+                DateTimeFormatter.ofPattern(
+                    "d MMMM HH:mm",
+                    locale
+                )
+            )
+
+        else ->
+            dateTime.format(
+                DateTimeFormatter
+                    .ofLocalizedDate(FormatStyle.MEDIUM)
+                    .withLocale(locale)
+            )
+    }
+}

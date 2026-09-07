@@ -19,4 +19,7 @@ interface AuthApi {
     /** Call for session refreshing  **/
     @POST("auth/refresh")
     suspend fun refresh(@Body request: RefreshRequestDto): AccountSessionResponse
+    /** Call for session logout **/
+    @POST("auth/logout")
+    suspend fun logout()
 }

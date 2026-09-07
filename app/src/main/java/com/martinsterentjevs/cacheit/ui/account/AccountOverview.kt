@@ -14,8 +14,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.martinsterentjevs.cacheit.R
+import com.martinsterentjevs.cacheit.ui.account.components.AccountSummary
+import com.martinsterentjevs.cacheit.ui.account.components.ClearOut
+import com.martinsterentjevs.cacheit.ui.account.components.PasswordChange
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.CacheItTheme
 import com.martinsterentjevs.cacheit.ui.theme.TypeHeading
@@ -35,13 +43,19 @@ import com.martinsterentjevs.cacheit.ui.theme.TypeHeading
 @OptIn(ExperimentalMaterial3Api::class) //Temporary workaround
 @Composable
 fun AccountOverviewScreen(
+    viewModel: AccountOverviewViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
+    onPasswordChange: () -> Unit = {},
+    onDeviceSessions: () -> Unit = {},
     onLoggedOut: () -> Unit = {},
 ) {
+    LaunchedEffect(Unit) { viewModel.events.collect {
+        if (it == AccountOverviewEvent.LoggedOut) onLoggedOut()
+    } }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Account") },
+                title = { Text(stringResource(R.string.account_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -57,24 +71,26 @@ fun AccountOverviewScreen(
                 .padding(innerPadding)
                 .padding(CacheItSpacing.lg),
         ) {
-            // TODO: account summary (email/username)
+            AccountSummary()
+            Text(stringResource(R.string.account_password_change), style = TypeHeading)
 
-            Text("Password change", style = TypeHeading)
-            // TODO: password change form
+            PasswordChange()
 
             Text(
-                "Device sessions",
+                stringResource(R.string.account_device_sessions),
                 style = TypeHeading,
                 modifier = Modifier.padding(top = CacheItSpacing.xl),
             )
             // TODO: device sessions list, each row individually revocable
 
             Button(
-                onClick = onLoggedOut,
+                onClick = { viewModel.onLogoutTapped() },
                 modifier = Modifier.padding(top = CacheItSpacing.xl),
             ) {
-                Text("Log out")
+                Text(stringResource(R.string.account_log_out))
             }
+            Text(stringResource(R.string.clearout_title))
+            ClearOut()
         }
     }
 }

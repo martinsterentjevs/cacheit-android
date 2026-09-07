@@ -1,5 +1,6 @@
 package com.martinsterentjevs.cacheit.ui.auth
 
+import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.auth.AuthRepository
 import com.martinsterentjevs.cacheit.services.crypto.CryptoService
 import com.martinsterentjevs.cacheit.services.security.SecurityService
@@ -18,11 +19,11 @@ class RegistrationViewModel @Inject constructor(
 
     fun submit(name: String, username: String, email: String, password: String, confirmPassword: String) {
         if (name.isBlank() || username.isBlank() || email.isBlank() || password.isBlank()) {
-            popupController.show(UiEvent.Snackbar("Fill out every field to continue"))
+            popupController.show(UiEvent.Snackbar(R.string.snackbar_error_blank_fields))
             return
         }
         if (password != confirmPassword) {
-            popupController.show(UiEvent.Snackbar("Passwords don't match"))
+            popupController.show(UiEvent.Snackbar(R.string.snackbar_error_password_mismatch))
             return
         }
 
