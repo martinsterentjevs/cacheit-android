@@ -67,7 +67,7 @@ start) visible in one place rather than scattered across separate issues.
   server base URL, HTTP-vs-HTTPS toggle) enabling faster self-host setup later as a secondary,
   non-cloud path. Current app state only supports the cloud-hosted path. Stub only - full
   self-host networking/config work is not this issue's scope, just the UI hooks for it.
-- [ ] Session navigation: nav-graph gating for unauthenticated/expired-session state. Currently,
+- [x] Session navigation: nav-graph gating for unauthenticated/expired-session state. Currently,
   nothing enforces where an unauthenticated user lands - no redirect point exists.
 - [x] Session lifecycle: `TokenAuthenticator` (refresh-on-401, single-flight guard, AT
   injection into pending requests). **Confirmed in scope for this issue** - the account
