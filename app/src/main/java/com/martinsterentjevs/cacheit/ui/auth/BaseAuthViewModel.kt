@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.auth.AuthFlowException
+import com.martinsterentjevs.cacheit.services.websockets.WsSessionManager
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
 import kotlinx.coroutines.channels.Channel
@@ -30,6 +31,7 @@ sealed interface AuthEvent {
  */
 abstract class BaseAuthViewModel(
     protected val popupController: PopupController,
+    protected val wsManager: WsSessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
@@ -46,6 +48,8 @@ abstract class BaseAuthViewModel(
             try {
                 block()
                 _events.send(AuthEvent.Success)
+                //Trigger WebSocket Launch on auth success
+                wsManager.connectIfNeeded()
             } catch (e: AuthFlowException) {
                 popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(e.userMessage)))
             } catch (e: Exception) {
