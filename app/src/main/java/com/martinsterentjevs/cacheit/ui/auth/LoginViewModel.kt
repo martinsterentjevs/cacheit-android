@@ -4,6 +4,7 @@ import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.auth.AuthRepository
 import com.martinsterentjevs.cacheit.services.crypto.CryptoService
 import com.martinsterentjevs.cacheit.services.security.SecurityService
+import com.martinsterentjevs.cacheit.services.websockets.WsSessionManager
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ class LoginViewModel @Inject constructor(
     private val cryptoService: CryptoService,
     private val securityService: SecurityService,
     popupController: PopupController,
-) : BaseAuthViewModel(popupController) {
+    wsManager: WsSessionManager
+) : BaseAuthViewModel(popupController, wsManager) {
 
     fun submit(identifier: String, password: String) {
         if (identifier.isBlank() || password.isBlank()) {

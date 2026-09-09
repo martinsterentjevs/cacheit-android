@@ -103,11 +103,11 @@ private fun NoteEditTopBar(
     val ready = state as? NoteEditUiState.Ready
     val borderColor =
         when (ready?.mode) {
-            NoteEditMode.View -> MaterialTheme.colorScheme.outline
+            NoteEditMode.View -> colorScheme.outline
             NoteEditMode.Create,
             NoteEditMode.TextEdit,
-            NoteEditMode.DrawingEdit -> MaterialTheme.colorScheme.primary
-            null -> MaterialTheme.colorScheme.outline
+            NoteEditMode.DrawingEdit -> colorScheme.primary
+            null -> colorScheme.outline
         }
 
     Column {

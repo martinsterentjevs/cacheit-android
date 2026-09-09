@@ -7,6 +7,7 @@ import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
+import com.martinsterentjevs.cacheit.data.note.NotesChangeSignal
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,12 +27,22 @@ sealed interface NoteListUiState{
 class NoteListViewModel @Inject constructor(
     private val popupController: PopupController,
     private val noteRepository: NoteRepository,
+    private val notesChangeSignal: NotesChangeSignal
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<NoteListUiState>(NoteListUiState.Loading)
     val uiState: StateFlow<NoteListUiState> = _uiState.asStateFlow()
 
     private var isSyncInFlight = false
     private var isDeleteInFlight = false
+
+    init {
+        viewModelScope.launch {
+            notesChangeSignal.changed.collect {
+                if (_uiState.value is NoteListUiState.Content) refresh() else load()
+            }
+        }
+    }
+
     fun load() {
         if (isSyncInFlight) return
         isSyncInFlight = true
@@ -42,7 +53,7 @@ class NoteListViewModel @Inject constructor(
                 if (result.failedCount > 0) {
                     popupController.show(
                         UiEvent.Snackbar(
-                            messageId = R.string.note_decrypt_failiure,
+                            messageId = R.string.note_decrypt_failure,
                             formatArgs = listOf(result.failedCount)
                         )
                     )
@@ -81,7 +92,6 @@ class NoteListViewModel @Inject constructor(
                     )
                 }
             } catch (ex: NoteFlowException) {
-                // Keep the existing notes if refresh fails.
                 _uiState.value = current.copy(isRefreshing = false)
 
                 popupController.show(

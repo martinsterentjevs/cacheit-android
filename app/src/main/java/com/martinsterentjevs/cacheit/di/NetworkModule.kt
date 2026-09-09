@@ -1,7 +1,7 @@
 package com.martinsterentjevs.cacheit.di
 
 import com.martinsterentjevs.cacheit.BuildConfig
-import com.martinsterentjevs.cacheit.network.AuthInterceptor
+import com.martinsterentjevs.cacheit.network.auth.AuthInterceptor
 import com.martinsterentjevs.cacheit.network.auth.AuthApi
 import com.martinsterentjevs.cacheit.network.auth.TokenAuthenticator
 import com.martinsterentjevs.cacheit.network.cacheItJson

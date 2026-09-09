@@ -9,8 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
-import androidx.compose.ui.unit.toSize
-import com.martinsterentjevs.cacheit.ui.note.model.NoteLogicalSize
 import kotlin.math.max
 
 /**
