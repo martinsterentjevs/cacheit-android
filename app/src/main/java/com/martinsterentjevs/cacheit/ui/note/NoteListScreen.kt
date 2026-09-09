@@ -2,6 +2,7 @@ package com.martinsterentjevs.cacheit.ui.note
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -95,7 +97,7 @@ fun NoteListScreen(
 
             when (val state = uiState) {
                 is NoteListUiState.Loading -> CircularProgressIndicator()
-                is NoteListUiState.Empty -> Text(stringResource(R.string.note_list_empty_notice), style = TypeBody)
+                is NoteListUiState.Empty -> EmptyListComponent(onCreateNote)
                 is NoteListUiState.Error -> Text(state.message, style = TypeBody)
                 is NoteListUiState.Content ->
                     PullToRefreshBox(
@@ -134,5 +136,33 @@ fun NoteListScreen(
 fun NotesListScreenPreview() {
     CacheItTheme {
         NoteListScreen()
+    }
+}
+@Composable
+fun EmptyListComponent(
+    onCreateNote: () -> Unit
+) {
+    Column (
+        modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,verticalArrangement = Arrangement.Center
+    ){
+        Text(
+            text = stringResource(R.string.note_list_empty_notice),
+            style = TypeBody,
+        )
+
+        Button(
+            onClick = onCreateNote
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(
+                    R.string.note_list_cta_notice
+                )
+            )
+
+            Text(
+                text = stringResource(R.string.note_list_cta_notice)
+            )
+        }
     }
 }

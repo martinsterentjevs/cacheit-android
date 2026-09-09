@@ -25,7 +25,7 @@ start) visible in one place rather than scattered across separate issues.
   in-screen toggle button, not on backing out of the screen while still locked
 - [x] Pull-to-refresh on `NotesListScreen` - currently only loads once on screen entry via
   `LaunchedEffect`; no swipe gesture re-triggers `load()`
-- [ ] Empty-state CTA button on `NotesListScreen` - the empty-state copy ("No notes added
+- [x] Empty-state CTA button on `NotesListScreen` - the empty-state copy ("No notes added
   yet.") already exists, the paired CTA button does not (flagged in the screen's own header
   comment already, just not previously tracked here)
 - [x] `isFromCache` indicator - `NotesResult.isFromCache` exists in state but nothing in

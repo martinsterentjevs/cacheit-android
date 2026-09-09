@@ -71,5 +71,6 @@
     <string name="password_change_new_password">New password</string>
     <string name="password_change_current_password">Current password</string>
     <string name="timestamp_yesterday">Yesterday %1$s</string>
+    <string name="note_list_cta_notice">Add your first note</string>
 
 </resources>
