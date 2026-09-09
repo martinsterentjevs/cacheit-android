@@ -143,7 +143,7 @@ class NoteEditViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadCreate() {
+    private fun loadCreate() {
         val accountId =
             securityService.getAccountId()
                 ?: throw IllegalStateException("Account ID unavailable")

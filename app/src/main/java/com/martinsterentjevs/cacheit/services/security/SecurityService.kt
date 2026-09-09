@@ -2,7 +2,6 @@ package com.martinsterentjevs.cacheit.services.security
 
 import android.content.Context
 import android.os.Build
-import com.martinsterentjevs.cacheit.services.security.SharedPreferencesLocalStore
 
 /**
  * Single public entry point for local security-adjacent storage. Everything

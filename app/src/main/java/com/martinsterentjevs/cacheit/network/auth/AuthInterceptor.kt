@@ -1,4 +1,4 @@
-package com.martinsterentjevs.cacheit.network
+package com.martinsterentjevs.cacheit.network.auth
 
 import com.martinsterentjevs.cacheit.services.security.SecurityService
 import okhttp3.Interceptor

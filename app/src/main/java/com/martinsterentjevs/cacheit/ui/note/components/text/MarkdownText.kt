@@ -1,6 +1,5 @@
 package com.martinsterentjevs.cacheit.ui.note.components.text
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

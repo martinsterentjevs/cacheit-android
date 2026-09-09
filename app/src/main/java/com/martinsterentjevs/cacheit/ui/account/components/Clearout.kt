@@ -24,6 +24,7 @@ import androidx.lifecycle.viewModelScope
 import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
 import com.martinsterentjevs.cacheit.services.security.SecurityService
+import com.martinsterentjevs.cacheit.services.websockets.WsSessionManager
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
@@ -33,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val HOLD_DURATION_MS = 10_000L
 
@@ -46,6 +48,7 @@ class ClearOutViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     private val securityService: SecurityService,
     private val popupController: PopupController,
+    private val wsManager: WsSessionManager,
 ) : ViewModel() {
     private val _events = Channel<ClearOutEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
@@ -56,6 +59,7 @@ class ClearOutViewModel @Inject constructor(
     fun onTapWipe() {
         viewModelScope.launch {
             noteRepository.clearLocalCache()
+            wsManager.disconnect()
             securityService.clearSession()
             securityService.clearSecureMek()
             _events.send(ClearOutEvent.LocalWipeComplete)
@@ -82,7 +86,7 @@ fun ClearOut(viewModel: ClearOutViewModel = hiltViewModel()) {
             while (isPressed && holdProgress < 1f) {
                 holdProgress = ((System.currentTimeMillis() - startTime) / HOLD_DURATION_MS.toFloat())
                     .coerceIn(0f, 1f)
-                delay(16)
+                delay(16.milliseconds)
             }
             if (holdProgress >= 1f) viewModel.onHoldCompleted()
         } else {
