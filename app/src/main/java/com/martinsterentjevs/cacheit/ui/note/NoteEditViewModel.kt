@@ -45,7 +45,7 @@ sealed interface NoteEditUiState {
 
     data object Loading : NoteEditUiState
 
-    data object NotFound : NoteEditUiState
+    data class NotFound(val couldNotConfirm: Boolean = false) : NoteEditUiState
 
     data class Ready(
         val mode: NoteEditMode,
@@ -170,21 +170,43 @@ class NoteEditViewModel @Inject constructor(
     }
 
     private suspend fun loadExisting(noteId: String) {
-        val note =
-            noteRepository.getLocalNote(noteId)
+        val cached = noteRepository.getLocalNote(noteId)
 
+        if (cached != null) {
+            isNewNote=false
+            _uiState.value=NoteEditUiState.Ready(
+                mode = NoteEditMode.View,
+                note = cached,
+                preEditNote = cached,
+                isDrawingLocked = cached.lockedByDeviceId != null
+            )
+            return
+        }
+        // Not in local cache - doesn't necessarily mean it doesn't exist server-side. Confirm
+        // with a refresh before declaring NotFound. Full getNotes() rather than a single-note
+        // fetch - same stopgap already used in WsSessionManager/NudgeHandler today, until a
+        // GET /notes/{id} endpoint exists server-side.
         isNewNote = false
-        _uiState.value =
-            if (note == null) {
-                NoteEditUiState.NotFound
-            } else {
-                NoteEditUiState.Ready(
-                    mode = NoteEditMode.View,
-                    note = note,
-                    preEditNote = note,
-                    isDrawingLocked = note.lockedByDeviceId != null,
-                )
-            }
+        try {
+            noteRepository.getNotes()
+        } catch (ex: NoteFlowException) {
+           // Couldn't confirm either way - don't claim the note doesn't exist.
+           _uiState.value = NoteEditUiState.NotFound(couldNotConfirm = true)
+           e(TAG, "loadExisting: Failed to confirm note",ex )
+           return
+        }
+
+        val confirmed = noteRepository.getLocalNote(noteId)
+        _uiState.value = if (confirmed != null) {
+            NoteEditUiState.Ready(
+                mode = NoteEditMode.View,
+                note = confirmed,
+                preEditNote = confirmed,
+                isDrawingLocked = confirmed.lockedByDeviceId != null,
+            )
+        } else {
+            NoteEditUiState.NotFound(couldNotConfirm = false)
+        }
     }
 
 

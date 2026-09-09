@@ -1,8 +1,6 @@
 package com.martinsterentjevs.cacheit.ui.note
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,17 +15,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,8 +76,23 @@ fun NoteEditScreen(
             when (val state = uiState) {
                 NoteEditUiState.Loading -> Unit
 
-                NoteEditUiState.NotFound -> {
-                    Text(stringResource(R.string.note_edit_note_not_found))
+                is NoteEditUiState.NotFound -> {
+                    Column {
+                        Text(
+                            stringResource(
+                                if (state.couldNotConfirm) {
+                                    R.string.note_edit_note_not_found_offline
+                                } else {
+                                    R.string.note_edit_note_not_found
+                                }
+                            )
+                        )
+                        if (state.couldNotConfirm) {
+                            TextButton(onClick = { viewModel.load(noteId) }) {
+                                Text(stringResource(R.string.retry))
+                            }
+                        }
+                    }
                 }
 
                 is NoteEditUiState.Ready -> {

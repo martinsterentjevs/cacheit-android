@@ -26,7 +26,7 @@
     <string name="note_drawing_locked">Locked for drawing on another device</string>
     <string name="note_edit_title">Edit note</string>
     <string name="navigation_back">Back</string>
-    <string name="note_edit_note_not_found">This note couldn\'t be found.</string>
+    <string name="note_edit_note_not_found_offline">This note couldn\'t be found.</string>
     <string name="note_edit_note_title">Title</string>
     <string name="saving_in_progress">Saving…</string>
     <string name="save">Save</string>
@@ -72,5 +72,8 @@
     <string name="password_change_current_password">Current password</string>
     <string name="timestamp_yesterday">Yesterday %1$s</string>
     <string name="note_list_cta_notice">Add your first note</string>
+    <string name="note_edit_cant_load_note">Couldn\'t access note - try again later.</string>
+    <string name="note_edit_note_not_found">Couldn\'t load note - try again later.</string>
+    <string name="retry">Retry</string>
 
 </resources>

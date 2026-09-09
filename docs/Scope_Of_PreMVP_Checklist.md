@@ -40,7 +40,7 @@ start) visible in one place rather than scattered across separate issues.
 >Items that require some manual work.
 
 - [x] Localization strings - replace any user-facing strings that are manually defined
-- [ ] `NoteEditUiState.NotFound` copy: currently reads as permanent ("This note couldn't be
+- [x] `NoteEditUiState.NotFound` copy: currently reads as permanent ("This note couldn't be
   found") but the real cause may just be "hasn't synced down to this device yet." Needs real
   logic (check pending-sync state), not just a copy change.
 - [x] Cold-start session restoration: app currently doesn't check for a valid persisted
