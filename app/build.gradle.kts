@@ -52,7 +52,8 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.websockets)
     implementation(libs.kotlinx.coroutines.core)
-
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test.v10)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime.saveable)
@@ -80,7 +81,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.bouncycastle)
 
     implementation(libs.hilt.android)
@@ -88,7 +89,7 @@ dependencies {
 
     implementation(libs.hilt.navigation.compose)
     ksp(libs.androidx.hilt.compiler)
-
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockk)
     implementation(libs.retrofit)

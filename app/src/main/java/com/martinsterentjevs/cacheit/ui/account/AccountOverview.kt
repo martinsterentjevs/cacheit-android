@@ -1,9 +1,15 @@
 package com.martinsterentjevs.cacheit.ui.account
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -23,6 +29,7 @@ import com.martinsterentjevs.cacheit.R
 import com.martinsterentjevs.cacheit.ui.account.components.AccountSummary
 import com.martinsterentjevs.cacheit.ui.account.components.ClearOut
 import com.martinsterentjevs.cacheit.ui.account.components.PasswordChange
+import com.martinsterentjevs.cacheit.ui.account.components.ThemeToggle
 import com.martinsterentjevs.cacheit.ui.theme.CacheItSpacing
 import com.martinsterentjevs.cacheit.ui.theme.CacheItTheme
 import com.martinsterentjevs.cacheit.ui.theme.TypeHeading
@@ -62,32 +69,29 @@ fun AccountOverviewScreen(
                 },
             )
         },
-    ) { innerPadding ->
+    ) { _ ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .safeDrawingPadding()
-                .padding(innerPadding)
-                .padding(CacheItSpacing.lg),
+                .padding(CacheItSpacing.lg)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(CacheItSpacing.md)
         ) {
             AccountSummary()
-            Text(stringResource(R.string.account_password_change), style = TypeHeading)
 
+            Spacer(modifier = Modifier.size(CacheItSpacing.xs))
+            ThemeToggle()
+
+            Text(stringResource(R.string.account_password_change), style = TypeHeading)
             PasswordChange()
 
-            Text(
-                stringResource(R.string.account_device_sessions),
-                style = TypeHeading,
-                modifier = Modifier.padding(top = CacheItSpacing.xl),
-            )
-            // TODO: device sessions list, each row individually revocable
+            Text(stringResource(R.string.account_device_sessions), style = TypeHeading)
+            // TODO: device sessions list
 
-            Button(
-                onClick = { viewModel.onLogoutTapped() },
-                modifier = Modifier.padding(top = CacheItSpacing.xl),
-            ) {
+            Button(onClick = { viewModel.onLogoutTapped() }) {
                 Text(stringResource(R.string.account_log_out))
             }
+
             Text(stringResource(R.string.clearout_title))
             ClearOut()
         }

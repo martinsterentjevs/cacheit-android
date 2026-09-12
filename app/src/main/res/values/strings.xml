@@ -75,5 +75,7 @@
     <string name="note_edit_cant_load_note">Couldn\'t access note - try again later.</string>
     <string name="note_edit_note_not_found">Couldn\'t load note - try again later.</string>
     <string name="retry">Retry</string>
+    <string name="account_toggle_theme">Toggle theme</string>
+    <string name="account_use_system_theme">Use System theme</string>
 
 </resources>
