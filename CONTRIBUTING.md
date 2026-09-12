@@ -1,8 +1,7 @@
 # Contributing to CacheIt Android
 
 Thanks for your interest in CacheIt. This document covers the conventions used in this
-repository - branching, commits, and the PR process. These match the shared Amnecyne Git
-Structure Reference; see that document for full detail.
+repository - branching, commits, and the PR process.
 
 ## Branching
 

@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatItalic
-import androidx.compose.material.icons.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,7 +69,7 @@ fun MarkdownToolIsland(
         }
 
         IconButton(onClick = { onValueChange(value.toggleLinePrefix("- ")) }) {
-            Icon(Icons.Default.FormatListBulleted, contentDescription = "Bullet list")
+            Icon(Icons.AutoMirrored.Filled.FormatListBulleted, contentDescription = "Bullet list")
         }
     }
 }
