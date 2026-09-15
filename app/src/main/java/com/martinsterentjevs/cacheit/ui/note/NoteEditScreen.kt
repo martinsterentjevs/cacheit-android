@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -153,6 +154,7 @@ private fun NoteEditTopBar(
                             onValueChange = viewModel::onTitleChanged,
                             enabled = !ready.isSaving,
                             singleLine = true,
+                            modifier = Modifier.testTag("note_edit_title_field"),
                             label = {
                                 Text(
                                     stringResource(
@@ -220,6 +222,7 @@ private fun NoteEditTopBar(
                                 }
                             },
                             enabled = !ready.isSaving,
+                            modifier = Modifier.testTag("note_edit_save_button"),
                         ) {
                             Icon(
                                 Icons.Default.Save,
@@ -242,6 +245,7 @@ private fun NoteEditTopBar(
                         IconButton(
                             onClick = viewModel::exitDrawingEdit,
                             enabled = !ready.isSaving,
+                            modifier = Modifier.testTag("note_edit_save_button"),
                         ) {
                             Icon(
                                 Icons.Default.Save,

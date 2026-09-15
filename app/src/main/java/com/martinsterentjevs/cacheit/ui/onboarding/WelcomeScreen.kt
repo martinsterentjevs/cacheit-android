@@ -12,6 +12,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,7 +50,8 @@ fun WelcomeScreen(
             onClick = onGetStarted,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = CacheItSpacing.xl, bottom = CacheItSpacing.md),
+                .padding(top = CacheItSpacing.xl, bottom = CacheItSpacing.md)
+                .testTag("welcome_get_started_button"),
         ) {
             Text(stringResource(R.string.welcome_get_started),
                 color = MaterialTheme.colorScheme.onPrimary)

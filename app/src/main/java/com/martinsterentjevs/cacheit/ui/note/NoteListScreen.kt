@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -78,7 +79,12 @@ fun NoteListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onCreateNote, modifier = Modifier.safeContentPadding()) {
+            FloatingActionButton(
+                onClick = onCreateNote,
+                modifier = Modifier
+                    .safeContentPadding()
+                    .testTag("note_list_create_fab"),
+            ) {
                 Icon(Icons.Filled.Add, contentDescription = "New note")
             }
         }, modifier = Modifier.nestedScroll(appBarScroll.nestedScrollConnection)
@@ -151,7 +157,8 @@ fun EmptyListComponent(
         )
 
         Button(
-            onClick = onCreateNote
+            onClick = onCreateNote,
+            modifier = Modifier.testTag("note_list_empty_cta"),
         ) {
             Icon(
                 imageVector = Icons.Default.Add,

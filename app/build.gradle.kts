@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "0.1"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.martinsterentjevs.cacheit.test.CacheItHiltTestRunner"
     }
 
     buildTypes {
@@ -53,7 +53,7 @@ dependencies {
     implementation(libs.ktor.client.websockets)
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.turbine)
-    testImplementation(libs.kotlinx.coroutines.test.v10)
+    testImplementation(libs.kotlinx.coroutines.test)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime.saveable)
@@ -79,6 +79,10 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.room.testing)
+    androidTestImplementation(libs.androidx.uiautomator)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.datastore.preferences)
@@ -89,7 +93,6 @@ dependencies {
 
     implementation(libs.hilt.navigation.compose)
     ksp(libs.androidx.hilt.compiler)
-    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockk)
     implementation(libs.retrofit)
