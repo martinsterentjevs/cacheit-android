@@ -5,6 +5,7 @@ import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
 import com.martinsterentjevs.cacheit.data.note.NoteWriteResult
+import com.martinsterentjevs.cacheit.data.preferences.AutosavePreference
 import com.martinsterentjevs.cacheit.network.note.NoteDto
 import com.martinsterentjevs.cacheit.services.security.SecurityService
 import com.martinsterentjevs.cacheit.testutil.AndroidLogRule
@@ -52,6 +53,7 @@ class NoteEditViewModelTest {
     private lateinit var noteRepository: NoteRepository
     private lateinit var popupController: PopupController
     private lateinit var securityService: SecurityService
+    private lateinit var autosavePreference: AutosavePreference
     private lateinit var viewModel: NoteEditViewModel
 
     @Before
@@ -59,8 +61,13 @@ class NoteEditViewModelTest {
         noteRepository = mockk()
         popupController = mockk(relaxed = true)
         securityService = mockk()
+        autosavePreference = mockk()
+        coEvery { autosavePreference.getDurationMs() } returns 30_000L
+        coEvery { noteRepository.addNote(any()) } returns NoteWriteResult.Verified(testFaceNote("new-note"))
+        coEvery { noteRepository.updateNote(any(), any()) } returns NoteWriteResult.Verified(testFaceNote("updated-note"))
+
         every { securityService.getAccountId() } returns "account-1"
-        viewModel = NoteEditViewModel(noteRepository, popupController, securityService)
+        viewModel = NoteEditViewModel(noteRepository, popupController, securityService, autosavePreference)
     }
 
     // ---- load(): Create mode ----
