@@ -73,8 +73,7 @@ fun NoteCard(
     isFromCache: Boolean,
     onClick: () -> Unit,
     onHistory: () -> Unit,
-    onDeleteNote: () -> Unit,
-    modifier: Modifier = Modifier
+    onDeleteNote: () -> Unit
 ) {
     val cardShape = CutCornerShape(
         topStart = 0.dp,

@@ -55,7 +55,7 @@ abstract class CacheItInstrumentedTestBase {
     @get:Rule(order = 1)
     val clearStateRule = object : org.junit.rules.ExternalResource() {
         override fun before() {
-            val context = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
             context.getSharedPreferences("cacheit_local_store", android.content.Context.MODE_PRIVATE)
                 .edit().clear().commit()
             context.deleteDatabase("cacheit.db")
