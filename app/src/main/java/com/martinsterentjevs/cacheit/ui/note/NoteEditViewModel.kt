@@ -10,6 +10,8 @@ import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
 import com.martinsterentjevs.cacheit.data.note.NoteWriteResult
+import com.martinsterentjevs.cacheit.data.preferences.AutosavePreference
+import com.martinsterentjevs.cacheit.di.controllers.NoteAutosaveController
 import com.martinsterentjevs.cacheit.services.security.SecurityService
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
@@ -79,6 +81,7 @@ class NoteEditViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     private val popupController: PopupController,
     private val securityService: SecurityService,
+    private val autosavePreference: AutosavePreference,
 ) : ViewModel() {
 
     private val _uiState =
@@ -311,6 +314,7 @@ class NoteEditViewModel @Inject constructor(
                 NoteEditMode.DrawingEdit -> state
             }
         }
+        autosaveController.onEditInteraction()
     }
 
     fun onBodyChanged(newBody: String) {
@@ -329,6 +333,7 @@ class NoteEditViewModel @Inject constructor(
                 NoteEditMode.DrawingEdit -> state
             }
         }
+        autosaveController.onEditInteraction()
     }
 
     /**
@@ -353,6 +358,7 @@ class NoteEditViewModel @Inject constructor(
                 NoteEditMode.TextEdit -> state
             }
         }
+        autosaveController.onEditInteraction()
     }
 
 
@@ -747,11 +753,54 @@ class NoteEditViewModel @Inject constructor(
                 note.body.isNullOrBlank() &&
                 note.drawing.isNullOrBlank()
 
-
     @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         stopTtlCountdown()
+        autosaveController.dispose()
         super.onCleared()
+    }
+    private val autosaveController = NoteAutosaveController(
+        scope = viewModelScope,
+        getInactivityDurationMs = { autosavePreference.getDurationMs() },
+        onAutosave = { performAutosave() }
+    )
+
+    fun onEditInteraction() = autosaveController.onEditInteraction()
+    fun onScreenOff() = autosaveController.onScreenOff()
+
+    private suspend fun performAutosave() {
+        val current = currentReady() ?: return
+
+        if (current.mode == NoteEditMode.View || current.isSaving) return
+
+        try {
+            val result = if (isNewNote) {
+                noteRepository.addNote(current.note)
+            } else {
+                noteRepository.updateNote(current.note.noteId!!, current.note)
+            }
+
+            when (result) {
+                is NoteWriteResult.Verified -> {
+                    _uiState.update { state ->
+                        (state as? NoteEditUiState.Ready)?.copy(
+                            note = result.note,
+                            preEditNote = result.note,
+                        ) ?: state
+                    }
+                    isNewNote = false
+                }
+                NoteWriteResult.Unverified -> {
+                    isNewNote = false
+                    // Deliberately silent — an unverified-save snackbar on every
+                    // autosave tick would be noisy. Manual save still shows it.
+                }
+            }
+        } catch (ex: NoteFlowException) {
+            e(TAG, "performAutosave: failed ${ex.message}")
+            // Silent by design — autosave failure shouldn't interrupt editing.
+            // Next tick or manual save retries.
+        }
     }
 
 
