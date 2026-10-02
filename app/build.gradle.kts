@@ -7,6 +7,9 @@ plugins {
 }
 
 
+
+
+
 android {
     namespace = "com.martinsterentjevs.cacheit"
     compileSdk {
@@ -25,13 +28,19 @@ android {
 
     buildTypes {
         debug{
-            buildConfigField("String", "SERVER_BASE_URL", "\"http://192.168.8.97:9001/\"")
+            buildConfigField("String", "SERVER_BASE_URL", "cacheit-staging.smokywastaken.id.lv")
         }
         release {
-            buildConfigField("String", "SERVER_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "SERVER_BASE_URL", "cacheit.smokywastaken.id.lv")
             optimization {
                 enable = false
             }
+        }
+        create("demo") {
+            applicationIdSuffix=".demo"
+            versionNameSuffix = ".demo"
+            isDebuggable = true
+            buildConfigField("String","SERVER_BASE_URL", "cacheit-demo.smokywastaken.id.lv")
         }
     }
     compileOptions {
