@@ -21,7 +21,7 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 1
-        versionName = "0.1"
+        versionName = (project.findProperty("releaseVersionName") as String?) ?: "1.0-MVP"
 
         testInstrumentationRunner = "com.martinsterentjevs.cacheit.test.CacheItHiltTestRunner"
     }
@@ -39,10 +39,19 @@ android {
         create("demo") {
             applicationIdSuffix=".demo"
             versionNameSuffix = ".demo"
-            isDebuggable = true
+            isDebuggable = false
+            signingConfig = signingConfigs.findByName("demo")
             buildConfigField("String","SERVER_BASE_URL", "\"https://cacheit-demo.smokywastaken.id.lv\"")
         }
     }
+    signingConfigs {
+    create("demo") {
+        storeFile = file(System.getenv("KEYSTORE_PATH") ?: "debug.keystore")
+        storePassword = System.getenv("KEYSTORE_PASSWORD")
+        keyAlias = System.getenv("KEY_ALIAS")
+        keyPassword = System.getenv("KEY_PASSWORD")
+    }
+}
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -52,7 +61,6 @@ android {
         viewBinding = true
         buildConfig = true
     }
-    buildToolsVersion = "36.1.0"
 }
 
 dependencies {
