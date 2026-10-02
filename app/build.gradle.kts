@@ -28,10 +28,10 @@ android {
 
     buildTypes {
         debug{
-            buildConfigField("String", "SERVER_BASE_URL", "cacheit-staging.smokywastaken.id.lv")
+            buildConfigField("String", "SERVER_BASE_URL", "\"https://cacheit-staging.smokywastaken.id.lv\"")
         }
         release {
-            buildConfigField("String", "SERVER_BASE_URL", "cacheit.smokywastaken.id.lv")
+            buildConfigField("String", "SERVER_BASE_URL", "\"https://cacheit.smokywastaken.id.lv\"")
             optimization {
                 enable = false
             }
@@ -40,7 +40,7 @@ android {
             applicationIdSuffix=".demo"
             versionNameSuffix = ".demo"
             isDebuggable = true
-            buildConfigField("String","SERVER_BASE_URL", "cacheit-demo.smokywastaken.id.lv")
+            buildConfigField("String","SERVER_BASE_URL", "\"https://cacheit-demo.smokywastaken.id.lv\"")
         }
     }
     compileOptions {
