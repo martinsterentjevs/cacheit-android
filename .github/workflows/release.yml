@@ -34,7 +34,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleDemoRelease --no-daemon
+        run: ./gradlew assembleDemo -PreleaseVersionName=${{ needs.release-please.outputs.tag_name }} --no-daemon
 
       - name: Upload to GitHub Release
         env:

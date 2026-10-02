@@ -32,7 +32,7 @@ jobs:
       # one flavor's unit tests is enough for the PR gate rather than
       # running all three redundantly.
       - name: Unit tests (staging flavor)
-        run: ./gradlew testStagingDebugUnitTest --no-daemon
+        run: ./gradlew testDebugUnitTest --no-daemon
 
       # Instrumented tests deliberately excluded here — emulator/device
       # runner cost doesn't belong in a blocking PR gate. Stay manual
