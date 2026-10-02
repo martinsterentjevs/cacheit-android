@@ -1,6 +1,8 @@
 package com.martinsterentjevs.cacheit.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,22 +13,25 @@ import com.martinsterentjevs.cacheit.ui.account.AccountOverviewScreen
 import com.martinsterentjevs.cacheit.ui.auth.LoginScreen
 import com.martinsterentjevs.cacheit.ui.auth.RegistrationScreen
 import com.martinsterentjevs.cacheit.ui.note.NoteEditScreen
-import com.martinsterentjevs.cacheit.ui.note.NoteVersionScreen
 import com.martinsterentjevs.cacheit.ui.note.NoteListScreen
+import com.martinsterentjevs.cacheit.ui.note.NoteVersionScreen
 import com.martinsterentjevs.cacheit.ui.onboarding.WelcomeScreen
+import kotlinx.coroutines.flow.collectLatest
 
-/**
- * Single NavHost for the app. MainActivity hosts this and nothing else — every
- * screen is a plain composable, never its own Activity.
- *
- * Auth-gated start destination (skip Welcome if a session already exists) is a
- * TODO once session-restore logic exists on the crypto/auth side.
- */
 @Composable
 fun CacheItNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = Route.Welcome.route,
+    sessionGuardViewModel: SessionGuardViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        sessionGuardViewModel.expired.collectLatest {
+            navController.navigate(Route.Welcome.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = startDestination

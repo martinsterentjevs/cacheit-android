@@ -25,7 +25,7 @@ start) visible in one place rather than scattered across separate issues.
   in-screen toggle button, not on backing out of the screen while still locked
 - [x] Pull-to-refresh on `NotesListScreen` - currently only loads once on screen entry via
   `LaunchedEffect`; no swipe gesture re-triggers `load()`
-- [ ] Empty-state CTA button on `NotesListScreen` - the empty-state copy ("No notes added
+- [x] Empty-state CTA button on `NotesListScreen` - the empty-state copy ("No notes added
   yet.") already exists, the paired CTA button does not (flagged in the screen's own header
   comment already, just not previously tracked here)
 - [x] `isFromCache` indicator - `NotesResult.isFromCache` exists in state but nothing in
@@ -40,7 +40,7 @@ start) visible in one place rather than scattered across separate issues.
 >Items that require some manual work.
 
 - [x] Localization strings - replace any user-facing strings that are manually defined
-- [ ] `NoteEditUiState.NotFound` copy: currently reads as permanent ("This note couldn't be
+- [x] `NoteEditUiState.NotFound` copy: currently reads as permanent ("This note couldn't be
   found") but the real cause may just be "hasn't synced down to this device yet." Needs real
   logic (check pending-sync state), not just a copy change.
 - [x] Cold-start session restoration: app currently doesn't check for a valid persisted
@@ -67,7 +67,7 @@ start) visible in one place rather than scattered across separate issues.
   server base URL, HTTP-vs-HTTPS toggle) enabling faster self-host setup later as a secondary,
   non-cloud path. Current app state only supports the cloud-hosted path. Stub only - full
   self-host networking/config work is not this issue's scope, just the UI hooks for it.
-- [ ] Session navigation: nav-graph gating for unauthenticated/expired-session state. Currently,
+- [x] Session navigation: nav-graph gating for unauthenticated/expired-session state. Currently,
   nothing enforces where an unauthenticated user lands - no redirect point exists.
 - [x] Session lifecycle: `TokenAuthenticator` (refresh-on-401, single-flight guard, AT
   injection into pending requests). **Confirmed in scope for this issue** - the account
@@ -80,11 +80,11 @@ start) visible in one place rather than scattered across separate issues.
 > single-device paths are straightforward instrumented UI tests; two-device paths need a
 > different approach than "run two emulators," noted below.
 
-- [ ] Automatic testing of UX flows.
+- [x] Automatic testing of UX flows.
 
   **Single device paths** - standard Compose UI instrumented tests, no special tooling needed:
 
-    - [ ] **Path A - full note lifecycle**
+    - [x] **Path A - full note lifecycle**
         1. Register a fresh test account
         2. Assert Notes list shows `Empty` state
         3. Tap create FAB -> assert Editor opens in create mode
@@ -94,7 +94,7 @@ start) visible in one place rather than scattered across separate issues.
         7. Delete the note (**depends on the delete-UI-entry-point item above existing first**)
         8. Delete the account `Note - This requires server path for account deletion to be complete - check corresponding server repo progress.`
 
-    - [ ] **Path B - version restore, text only**
+    - [x] **Path B - version restore, text only**
         1. Register account, create a note (title "A"), save -> 1 version exists
         2. Edit title to "B", save -> 2 versions exist, `hasHistory` true
         3. Open version history, select the first version, restore
@@ -102,7 +102,7 @@ start) visible in one place rather than scattered across separate issues.
       <!-- DEPENDS ON: NoteVersionViewModel and its restoreVersion return-type decision,
            both in progress now - this path is a target definition, not runnable yet. -->
 
-    - [ ] **Path C - version restore, drawing to text-only**
+    - [x] **Path C - version restore, drawing to text-only**
         1. Register account, create a text-only note, save
         2. Switch to drawing mode, draw something, save
         3. Open version history, restore the pre-drawing (text-only) version
@@ -116,9 +116,9 @@ start) visible in one place rather than scattered across separate issues.
   direct API calls (same approach as the server's `NoteControllerTestBase.loginSecondDevice`),
   and only UI-assert on device 1's reaction to the resulting sync:
 
-    - [ ] **Path D** - Device 1 (real UI test): create a note, save. Device 2 (direct API call):
+    - [x] **Path D** - Device 1 (real UI test): create a note, save. Device 2 (direct API call):
       login, `GET /notes`. Assert (via API response, not UI) the note is visible to device 2.
-    - [ ] **Path E** - same shape, for edit propagation and drawing-lock conflict (device 2's
+    - [x] **Path E** - same shape, for edit propagation and drawing-lock conflict (device 2's
       API call attempts to acquire the lock device 1 already holds; assert 409).
       <!-- SCOPE CHECK: if these are meant to test pull-to-refresh/manual-sync (already built),
            in scope now. If "syncing edits" implies WebSocket-nudge-triggered sync, that's

@@ -18,6 +18,8 @@ interface NoteApi {
 
 @GET("notes")
 suspend fun getNotes(): List<NoteDto>
+@GET("notes/{noteId}")
+suspend fun getNote(@Path("noteId")noteId: String): NoteDto
 
 @POST("notes")
 suspend fun addNote(@Body note: NoteDto): NoteDto

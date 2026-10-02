@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,6 +82,7 @@ fun NoteVersionScreen(
                                 supportingContent = { if (version.isCurrent) Text(stringResource(R.string.note_version_current)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .testTag("note_version_list_item")
                                     .clickable {
                                         viewModel.onVersionTapped(version.versionId)
                                     },
@@ -94,17 +96,18 @@ fun NoteVersionScreen(
                     state.previewedVersion?.let { preview ->
                         AlertDialog(
                             onDismissRequest = viewModel::dismissPreview,
-                            title = { Text(preview.title) },
+                            title = { Text(preview.title, modifier = Modifier.testTag("note_version_preview_title")) },
                             text = {
                                 Column {
-                                    preview.body?.let { Text(it) }
-                                    if (preview.drawing != null) Text(stringResource(R.string.note_version_has_drawing))
+                                    preview.body?.let { Text(it, modifier = Modifier.testTag("note_version_preview_body")) }
+                                    if (preview.drawing != null) Text(stringResource(R.string.note_version_has_drawing), modifier = Modifier.testTag("note_version_preview_has_drawing"))
                                 }
                             },
                             confirmButton = {
                                 TextButton(
                                     onClick = { state.previewedVersionId?.let(viewModel::restore) },
                                     enabled = !state.isRestoring,
+                                    modifier = Modifier.testTag("note_version_restore_confirm"),
                                 ) {
                                     Text(if (state.isRestoring) stringResource(R.string.note_version_restore_in_progress) else stringResource(R.string.note_version_restore_this))
                                 }

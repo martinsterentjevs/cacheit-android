@@ -69,6 +69,7 @@ sealed interface NoteWriteResult {
 
 interface NoteRepository {
     suspend fun getNotes(): NotesResult
+    suspend fun getNote(noteId: String): FaceNote?
 
     /** Local-cache-only read, no network call - see note-viewmodels-reference.md's "Local persistence" section. */
     suspend fun getLocalNote(noteId: String): FaceNote?
@@ -119,6 +120,16 @@ internal class NoteRepositoryImpl @Inject constructor(
             }
         }
         return NotesResult(notes, failedCount, isFromCache)
+    }
+
+    override suspend fun getNote(noteId: String): FaceNote? {
+        try {
+            val noteDto = noteApi.getNote(noteId)
+            return getDecryptedNote(noteDto)
+        } catch (ex: Exception){
+            Log.e(TAG, "getNote: Failed to fetch note $noteId",ex )
+        }
+        return null
     }
 
     override suspend fun getLocalNote(noteId: String): FaceNote? =

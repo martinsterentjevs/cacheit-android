@@ -1,8 +1,9 @@
 package com.martinsterentjevs.cacheit.di
 
 import com.martinsterentjevs.cacheit.BuildConfig
-import com.martinsterentjevs.cacheit.network.auth.AuthInterceptor
+import com.martinsterentjevs.cacheit.network.account.AccountApi
 import com.martinsterentjevs.cacheit.network.auth.AuthApi
+import com.martinsterentjevs.cacheit.network.auth.AuthInterceptor
 import com.martinsterentjevs.cacheit.network.auth.TokenAuthenticator
 import com.martinsterentjevs.cacheit.network.cacheItJson
 import com.martinsterentjevs.cacheit.network.note.NoteApi
@@ -59,5 +60,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideNoteApi(retrofit: Retrofit): NoteApi = retrofit.create(NoteApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAccountApi(retrofit: Retrofit): AccountApi = retrofit.create(AccountApi::class.java)
 
 }

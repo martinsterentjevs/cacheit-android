@@ -10,6 +10,8 @@ import com.martinsterentjevs.cacheit.data.note.FaceNote
 import com.martinsterentjevs.cacheit.data.note.NoteFlowException
 import com.martinsterentjevs.cacheit.data.note.NoteRepository
 import com.martinsterentjevs.cacheit.data.note.NoteWriteResult
+import com.martinsterentjevs.cacheit.data.preferences.AutosavePreference
+import com.martinsterentjevs.cacheit.di.controllers.NoteAutosaveController
 import com.martinsterentjevs.cacheit.services.security.SecurityService
 import com.martinsterentjevs.cacheit.ui.common.PopupController
 import com.martinsterentjevs.cacheit.ui.common.UiEvent
@@ -45,7 +47,7 @@ sealed interface NoteEditUiState {
 
     data object Loading : NoteEditUiState
 
-    data object NotFound : NoteEditUiState
+    data class NotFound(val couldNotConfirm: Boolean = false) : NoteEditUiState
 
     data class Ready(
         val mode: NoteEditMode,
@@ -79,6 +81,7 @@ class NoteEditViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     private val popupController: PopupController,
     private val securityService: SecurityService,
+    private val autosavePreference: AutosavePreference,
 ) : ViewModel() {
 
     private val _uiState =
@@ -170,21 +173,43 @@ class NoteEditViewModel @Inject constructor(
     }
 
     private suspend fun loadExisting(noteId: String) {
-        val note =
-            noteRepository.getLocalNote(noteId)
+        val cached = noteRepository.getLocalNote(noteId)
 
+        if (cached != null) {
+            isNewNote=false
+            _uiState.value=NoteEditUiState.Ready(
+                mode = NoteEditMode.View,
+                note = cached,
+                preEditNote = cached,
+                isDrawingLocked = cached.lockedByDeviceId != null
+            )
+            return
+        }
+        // Not in local cache - doesn't necessarily mean it doesn't exist server-side. Confirm
+        // with a refresh before declaring NotFound. Full getNotes() rather than a single-note
+        // fetch - same stopgap already used in WsSessionManager/NudgeHandler today, until a
+        // GET /notes/{id} endpoint exists server-side.
         isNewNote = false
-        _uiState.value =
-            if (note == null) {
-                NoteEditUiState.NotFound
-            } else {
-                NoteEditUiState.Ready(
-                    mode = NoteEditMode.View,
-                    note = note,
-                    preEditNote = note,
-                    isDrawingLocked = note.lockedByDeviceId != null,
-                )
-            }
+        try {
+            noteRepository.getNotes()
+        } catch (ex: NoteFlowException) {
+           // Couldn't confirm either way - don't claim the note doesn't exist.
+           _uiState.value = NoteEditUiState.NotFound(couldNotConfirm = true)
+           e(TAG, "loadExisting: Failed to confirm note",ex )
+           return
+        }
+
+        val confirmed = noteRepository.getLocalNote(noteId)
+        _uiState.value = if (confirmed != null) {
+            NoteEditUiState.Ready(
+                mode = NoteEditMode.View,
+                note = confirmed,
+                preEditNote = confirmed,
+                isDrawingLocked = confirmed.lockedByDeviceId != null,
+            )
+        } else {
+            NoteEditUiState.NotFound(couldNotConfirm = false)
+        }
     }
 
 
@@ -289,6 +314,7 @@ class NoteEditViewModel @Inject constructor(
                 NoteEditMode.DrawingEdit -> state
             }
         }
+        autosaveController.onEditInteraction()
     }
 
     fun onBodyChanged(newBody: String) {
@@ -307,6 +333,7 @@ class NoteEditViewModel @Inject constructor(
                 NoteEditMode.DrawingEdit -> state
             }
         }
+        autosaveController.onEditInteraction()
     }
 
     /**
@@ -331,6 +358,7 @@ class NoteEditViewModel @Inject constructor(
                 NoteEditMode.TextEdit -> state
             }
         }
+        autosaveController.onEditInteraction()
     }
 
 
@@ -725,11 +753,54 @@ class NoteEditViewModel @Inject constructor(
                 note.body.isNullOrBlank() &&
                 note.drawing.isNullOrBlank()
 
-
     @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         stopTtlCountdown()
+        autosaveController.dispose()
         super.onCleared()
+    }
+    private val autosaveController = NoteAutosaveController(
+        scope = viewModelScope,
+        getInactivityDurationMs = { autosavePreference.getDurationMs() },
+        onAutosave = { performAutosave() }
+    )
+
+    fun onEditInteraction() = autosaveController.onEditInteraction()
+    fun onScreenOff() = autosaveController.onScreenOff()
+
+    private suspend fun performAutosave() {
+        val current = currentReady() ?: return
+
+        if (current.mode == NoteEditMode.View || current.isSaving) return
+
+        try {
+            val result = if (isNewNote) {
+                noteRepository.addNote(current.note)
+            } else {
+                noteRepository.updateNote(current.note.noteId!!, current.note)
+            }
+
+            when (result) {
+                is NoteWriteResult.Verified -> {
+                    _uiState.update { state ->
+                        (state as? NoteEditUiState.Ready)?.copy(
+                            note = result.note,
+                            preEditNote = result.note,
+                        ) ?: state
+                    }
+                    isNewNote = false
+                }
+                NoteWriteResult.Unverified -> {
+                    isNewNote = false
+                    // Deliberately silent — an unverified-save snackbar on every
+                    // autosave tick would be noisy. Manual save still shows it.
+                }
+            }
+        } catch (ex: NoteFlowException) {
+            e(TAG, "performAutosave: failed ${ex.message}")
+            // Silent by design — autosave failure shouldn't interrupt editing.
+            // Next tick or manual save retries.
+        }
     }
 
 

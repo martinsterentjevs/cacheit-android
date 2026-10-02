@@ -1,8 +1,10 @@
 package com.martinsterentjevs.cacheit.ui.note
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,18 +19,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.martinsterentjevs.cacheit.R
@@ -51,6 +56,24 @@ fun NoteEditScreen(
             when (event) {
                 NoteEditUiEvent.Dismiss -> onBack()
             }
+        }
+    }
+    val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                viewModel.onScreenOff()
+            }
+        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(Intent.ACTION_SCREEN_OFF),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+        onDispose {
+            context.unregisterReceiver(receiver)
         }
     }
 
@@ -79,8 +102,23 @@ fun NoteEditScreen(
             when (val state = uiState) {
                 NoteEditUiState.Loading -> Unit
 
-                NoteEditUiState.NotFound -> {
-                    Text(stringResource(R.string.note_edit_note_not_found))
+                is NoteEditUiState.NotFound -> {
+                    Column {
+                        Text(
+                            stringResource(
+                                if (state.couldNotConfirm) {
+                                    R.string.note_edit_note_not_found_offline
+                                } else {
+                                    R.string.note_edit_note_not_found
+                                }
+                            )
+                        )
+                        if (state.couldNotConfirm) {
+                            TextButton(onClick = { viewModel.load(noteId) }) {
+                                Text(stringResource(R.string.retry))
+                            }
+                        }
+                    }
                 }
 
                 is NoteEditUiState.Ready -> {
@@ -141,6 +179,7 @@ private fun NoteEditTopBar(
                             onValueChange = viewModel::onTitleChanged,
                             enabled = !ready.isSaving,
                             singleLine = true,
+                            modifier = Modifier.testTag("note_edit_title_field"),
                             label = {
                                 Text(
                                     stringResource(
@@ -208,6 +247,7 @@ private fun NoteEditTopBar(
                                 }
                             },
                             enabled = !ready.isSaving,
+                            modifier = Modifier.testTag("note_edit_save_button"),
                         ) {
                             Icon(
                                 Icons.Default.Save,
@@ -230,6 +270,7 @@ private fun NoteEditTopBar(
                         IconButton(
                             onClick = viewModel::exitDrawingEdit,
                             enabled = !ready.isSaving,
+                            modifier = Modifier.testTag("note_edit_save_button"),
                         ) {
                             Icon(
                                 Icons.Default.Save,

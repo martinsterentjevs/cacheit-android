@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.martinsterentjevs.cacheit.ui.note.NoteEditMode
@@ -91,12 +92,12 @@ fun NoteCanvas(
         NoteDocument(
             version = 1,
             elements = textFieldValue.text.split('\n')
-                    .mapIndexed { index, line ->
-                        index to NoteElement(
-                            content = line,
-                        )
-                    }
-                    .toMap()
+                .mapIndexed { index, line ->
+                    index to NoteElement(
+                        content = line,
+                    )
+                }
+                .toMap()
 
         )
     }
@@ -156,7 +157,7 @@ fun NoteCanvas(
                         alpha = 0.5f,
                         logicalSize = noteLogicalSize,
                         onDrawingChanged = {},
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().testTag("note_edit_drawing_canvas"),
                     )
 
                     NoteTextLayer(
@@ -185,7 +186,7 @@ fun NoteCanvas(
                             historyRevision++
                             persistDrawingHistory()
                         },
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().testTag("note_edit_drawing_canvas"),
                     )
                 }
 
@@ -203,7 +204,7 @@ fun NoteCanvas(
                         interactive = false,
                         logicalSize = noteLogicalSize,
                         onDrawingChanged = {},
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().testTag("note_edit_drawing_canvas"),
                     )
                 }
             }

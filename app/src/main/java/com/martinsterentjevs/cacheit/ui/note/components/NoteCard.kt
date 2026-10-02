@@ -26,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -40,7 +42,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
-import androidx.compose.ui.platform.LocalLocale
 
 data class NoteCardUiState(
     val noteId: String,
@@ -72,8 +73,7 @@ fun NoteCard(
     isFromCache: Boolean,
     onClick: () -> Unit,
     onHistory: () -> Unit,
-    onDeleteNote: () -> Unit,
-    modifier: Modifier = Modifier
+    onDeleteNote: () -> Unit
 ) {
     val cardShape = CutCornerShape(
         topStart = 0.dp,
@@ -84,6 +84,7 @@ fun NoteCard(
     val borderColor = if (!isFromCache) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
     Box(
         modifier = Modifier
+            .testTag("note_card_${state.noteId}")
             .fillMaxWidth(.95f)
             .heightIn(min = 120.dp)
             .clip(cardShape)
@@ -165,7 +166,9 @@ fun NoteCard(
                 if (state.hasHistory){
                     IconButton(
                         onClick = onHistory,
-                        modifier = Modifier.size(CacheItSpacing.xl),
+                        modifier = Modifier
+                            .size(CacheItSpacing.xl)
+                            .testTag("note_card_history_${state.noteId}"),
                     ) {
                         Icon(
                             imageVector = Icons.Default.History,
@@ -176,7 +179,9 @@ fun NoteCard(
                 }
                 IconButton(
                     onClick = onDeleteNote,
-                    modifier = Modifier.size(CacheItSpacing.xl)
+                    modifier = Modifier
+                        .size(CacheItSpacing.xl)
+                        .testTag("note_card_delete_${state.noteId}"),
                 ){
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -194,7 +199,7 @@ fun formatNoteTimestamp(
     timestamp: Instant,
     locale: Locale,
 
-): String {
+    ): String {
     val zone = ZoneId.systemDefault()
 
 
