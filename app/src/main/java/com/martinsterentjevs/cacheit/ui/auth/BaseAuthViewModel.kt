@@ -50,10 +50,10 @@ abstract class BaseAuthViewModel(
                 _events.send(AuthEvent.Success)
                 //Trigger WebSocket Launch on auth success
                 wsManager.connectIfNeeded()
-            } catch (e: AuthFlowException) {
-                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(e.userMessage)))
-            } catch (e: Exception) {
-                android.util.Log.e("AuthFlow","Unhandled auth error",e)
+            } catch (ex: AuthFlowException) {
+                popupController.show(UiEvent.Snackbar(R.string.snackbar_error,listOf(ex.userMessage)))
+            } catch (ex: Exception) {
+                android.util.Log.e("AuthFlow","Unhandled auth error",ex)
                 popupController.show(UiEvent.Snackbar(R.string.snackbar_error_general))
             } finally {
                 _uiState.value = AuthUiState.Idle

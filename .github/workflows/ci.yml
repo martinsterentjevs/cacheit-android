@@ -28,10 +28,10 @@ jobs:
       - name: ktlint check
         run: ./gradlew ktlintCheck --no-daemon
 
-      # Business logic doesn't vary by flavor — only BASE_URL/WS_URL do — so
-      # one flavor's unit tests is enough for the PR gate rather than
+      # Business logic doesn't vary by build type — only BASE_URL/WS_URL do — so
+      # one build type's unit tests is enough for the PR gate rather than
       # running all three redundantly.
-      - name: Unit tests (staging flavor)
+      - name: Unit tests (debug build type)
         run: ./gradlew testDebugUnitTest --no-daemon
 
       # Instrumented tests deliberately excluded here — emulator/device

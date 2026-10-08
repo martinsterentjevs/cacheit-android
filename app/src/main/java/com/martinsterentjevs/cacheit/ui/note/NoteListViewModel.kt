@@ -63,8 +63,8 @@ class NoteListViewModel @Inject constructor(
                 } else {
                     NoteListUiState.Content(result.notes, result.isFromCache,isRefreshing = false)
                 }
-            } catch (e: NoteFlowException) {
-                _uiState.value = NoteListUiState.Error(e.userMessage)
+            } catch (ex: NoteFlowException) {
+                _uiState.value = NoteListUiState.Error(ex.userMessage)
             } finally {
                 isSyncInFlight = false
             }
@@ -125,7 +125,7 @@ class NoteListViewModel @Inject constructor(
                     )
                 }
 
-            } catch (e: NoteFlowException) {
+            } catch (ex: NoteFlowException) {
                 popupController.show(
                     UiEvent.Snackbar(
                         messageId = R.string.note_list_delete_error

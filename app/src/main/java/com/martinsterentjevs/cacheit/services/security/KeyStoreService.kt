@@ -86,9 +86,9 @@ internal class AndroidKeyStoreService : KeyStoreService {
         val key = try {
             keyStore.getKey(alias.alias, null) as? SecretKey
                 ?: throw IllegalStateException("No Keystore entry for $alias")
-        } catch (e: KeyPermanentlyInvalidatedException) {
+        } catch (ex: KeyPermanentlyInvalidatedException) {
             invalidate(alias)
-            throw CacheInvalidatedException(alias, e)
+            throw CacheInvalidatedException(alias, ex)
         }
 
         val nonce = envelope.copyOfRange(0, NONCE_SIZE)
@@ -98,9 +98,9 @@ internal class AndroidKeyStoreService : KeyStoreService {
         return try {
             cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(TAG_SIZE, nonce))
             cipher.doFinal(ciphertext)
-        } catch (e: KeyPermanentlyInvalidatedException) {
+        } catch (ex: KeyPermanentlyInvalidatedException) {
             invalidate(alias)
-            throw CacheInvalidatedException(alias, e)
+            throw CacheInvalidatedException(alias, ex)
         }
     }
 

@@ -282,11 +282,11 @@ class NoteEditViewModel @Inject constructor(
                     startTtlCountdown(Instant.parse(it))
                 }
 
-            } catch (e: NoteFlowException) {
+            } catch (ex: NoteFlowException) {
                 popupController.show(
                     UiEvent.Snackbar(
                         R.string.snackbar_error,
-                        listOf(e.userMessage)
+                        listOf(ex.userMessage)
                     )
                 )
             }
@@ -524,8 +524,8 @@ class NoteEditViewModel @Inject constructor(
                     }
                 }
                 isNewNote = false
-            } catch (e: NoteFlowException) {
-                handleSaveFailure(e)
+            } catch (ex: NoteFlowException) {
+                handleSaveFailure(ex)
             }
         }
     }
@@ -554,8 +554,8 @@ class NoteEditViewModel @Inject constructor(
         targetMode: NoteEditMode,
     ) {
         /* ADR 0002 semantics:
-         * Unverified means the server almost certainly accepted the write.
-         * Therefore it is safe to release the drawing lock and transition to
+         * Unverified means the server almost certainly accepted the write op.
+         * Therefore, it is safe to release the drawing lock and transition to
          * targetMode. Do NOT restore preEditNote here.
          */
         if (releaseDrawingLock) {
@@ -630,11 +630,11 @@ class NoteEditViewModel @Inject constructor(
     ) {
         try {
             noteRepository.releaseDrawingLock(noteId)
-        } catch (e: NoteFlowException) {
+        } catch (ex: NoteFlowException) {
             popupController.show(
                 UiEvent.Snackbar(
                     R.string.snackbar_error,
-                    listOf(e.userMessage)
+                    listOf(ex.userMessage)
                 )
             )
         } finally {
@@ -765,7 +765,6 @@ class NoteEditViewModel @Inject constructor(
         onAutosave = { performAutosave() }
     )
 
-    fun onEditInteraction() = autosaveController.onEditInteraction()
     fun onScreenOff() = autosaveController.onScreenOff()
 
     private suspend fun performAutosave() {
