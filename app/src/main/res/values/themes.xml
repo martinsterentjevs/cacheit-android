@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.CacheIt" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Base application theme. -->
+</resources>

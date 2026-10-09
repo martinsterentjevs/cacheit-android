@@ -1,0 +1,50 @@
+name: Release — Demo build
+
+# Tag this repo yourself, by hand, only after confirming the matching
+# server release is live on cacheit-demo.smokywastaken.id.lv. See
+# docs/android-server-ci-lining-guidelines.md for why this isn't automated
+# across repos yet and what the manual sequencing rule is.
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  build-demo-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - run: chmod +x gradlew
+
+      - name: Decode signing keystore
+        run: echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
+      - name: Build demo release APK
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleDemo -PreleaseVersionName=${GITHUB_REF_NAME#v} --no-daemon
+
+      - name: Upload to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            app/build/outputs/apk/demo/*.apk \
+            --title "${{ github.ref_name }}" \
+            --generate-notes
+
+      - name: Clean up keystore
+        if: always()
+        run: rm -f release.keystore
