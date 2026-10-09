@@ -26,6 +26,24 @@ android {
         testInstrumentationRunner = "com.martinsterentjevs.cacheit.test.CacheItHiltTestRunner"
     }
 
+    signingConfigs {
+        create("demo") {
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+            if (keystorePath != null) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            } else {
+                val debugConfig = signingConfigs.getByName("debug")
+                storeFile = debugConfig.storeFile
+                storePassword = debugConfig.storePassword
+                keyAlias = debugConfig.keyAlias
+                keyPassword = debugConfig.keyPassword
+            }
+        }
+    }
+
     buildTypes {
         debug{
             buildConfigField("String", "SERVER_BASE_URL", "\"https://cacheit-staging.smokywastaken.id.lv\"")
@@ -40,18 +58,17 @@ android {
             applicationIdSuffix=".demo"
             versionNameSuffix = ".demo"
             isDebuggable = false
-            signingConfig = signingConfigs.findByName("demo")
+            signingConfig = signingConfigs.getByName("demo")
             buildConfigField("String","SERVER_BASE_URL", "\"https://cacheit-demo.smokywastaken.id.lv\"")
         }
+        create("staging") {
+            applicationIdSuffix = ".staging"
+            versionNameSuffix = ".staging"
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "SERVER_BASE_URL", "\"https://cacheit-staging.smokywastaken.id.lv\"")
+        }
     }
-    signingConfigs {
-    create("demo") {
-        storeFile = file(System.getenv("KEYSTORE_PATH") ?: "debug.keystore")
-        storePassword = System.getenv("KEYSTORE_PASSWORD")
-        keyAlias = System.getenv("KEY_ALIAS")
-        keyPassword = System.getenv("KEY_PASSWORD")
-    }
-}
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
